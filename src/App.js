@@ -32,12 +32,12 @@ function App() {
   console.log(pokemonData);
 
   return (
-    <div className="App">
+    <div className="App m-1 sm:m-2">
       {loading ? (
         <h1>Now Loading...</h1>
       ) : (
         <>
-          <div className="pokemonCardContainer">
+          <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
             {pokemonData.map((pokemon, i) => {
               return <Card key={i} pokemon={pokemon} />;
             })}
