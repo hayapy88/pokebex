@@ -9,6 +9,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [pokemonData, setPokemonData] = useState([]);
   const [nextURL, setNextURL] = useState("");
+  const [prevURL, setPrevURL] = useState("");
   useEffect(() => {
     const fetchPokemonData = async () => {
       // All Pokemon Data
@@ -17,6 +18,7 @@ function App() {
       loadPokemon(res.results);
       // console.log(res.next);
       setNextURL(res.next);
+      setPrevURL(res.previous); // Null
       setLoading(false);
     };
     fetchPokemonData();
@@ -38,10 +40,21 @@ function App() {
     setLoading(true);
     let data = await getAllPokemon(nextURL);
     console.log(data);
-    loadPokemon(data.results);
+    await loadPokemon(data.results);
+    setNextURL(data.next);
+    setPrevURL(data.previous);
     setLoading(false);
   };
-  const prevPage = () => {};
+  const prevPage = async () => {
+    if (!prevURL) return;
+    setLoading(true);
+    let data = await getAllPokemon(prevURL);
+    console.log(data);
+    await loadPokemon(data.results);
+    setNextURL(data.next);
+    setPrevURL(data.previous);
+    setLoading(false);
+  };
 
   return (
     <>
@@ -56,9 +69,21 @@ function App() {
                 return <Card key={i} pokemon={pokemon} />;
               })}
             </div>
-            <div className="pager">
-              <button onClick={prevPage}>Prev</button>
-              <button onClick={nextPage}>Next</button>
+            <div className="pager inline-flex">
+              <button
+                type="button"
+                onClick={prevPage}
+                className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-l"
+              >
+                Prev
+              </button>
+              <button
+                type="button"
+                onClick={nextPage}
+                className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-r"
+              >
+                Next
+              </button>
             </div>
           </>
         )}
