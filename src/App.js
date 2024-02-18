@@ -3,6 +3,7 @@ import "./App.css";
 import { getAllPokemon, getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
+import Loading from "./components/Loading/Loading.js";
 
 function App() {
   const initialURL = "https://pokeapi.co/api/v2/pokemon?limit=30";
@@ -19,7 +20,9 @@ function App() {
       // console.log(res.next);
       setNextURL(res.next);
       setPrevURL(res.previous); // Null
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     };
     fetchPokemonData();
   }, []);
@@ -36,16 +39,18 @@ function App() {
 
   // console.log(pokemonData);
 
-  const nextPage = async () => {
+  const handleNextPage = async () => {
     setLoading(true);
     let data = await getAllPokemon(nextURL);
     console.log(data);
     await loadPokemon(data.results);
     setNextURL(data.next);
     setPrevURL(data.previous);
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 800);
   };
-  const prevPage = async () => {
+  const handlePrevPage = async () => {
     if (!prevURL) return;
     setLoading(true);
     let data = await getAllPokemon(prevURL);
@@ -53,20 +58,20 @@ function App() {
     await loadPokemon(data.results);
     setNextURL(data.next);
     setPrevURL(data.previous);
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   };
 
   return (
-    <div className="bg-blue-100">
-      <Navbar />
-      <div className="text-center py-14">
-        <div className="container mx-auto">
-          {loading ? (
-            <div>
-              <h1 className="mt-20">Now Loading...</h1>
-            </div>
-          ) : (
-            <>
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="bg-blue-100">
+          <Navbar />
+          <div className="text-center py-14">
+            <div className="container mx-auto">
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
                 {pokemonData.map((pokemon, i) => {
                   return <Card key={i} pokemon={pokemon} />;
@@ -76,25 +81,25 @@ function App() {
                 <div className="inline-flex my-4">
                   <button
                     type="button"
-                    onClick={prevPage}
+                    onClick={handlePrevPage}
                     className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-l"
                   >
                     Prev
                   </button>
                   <button
                     type="button"
-                    onClick={nextPage}
+                    onClick={handleNextPage}
                     className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-r"
                   >
                     Next
                   </button>
                 </div>
               </div>
-            </>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 
