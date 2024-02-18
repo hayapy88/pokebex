@@ -5,7 +5,7 @@ import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
 
 function App() {
-  const initialURL = "https://pokeapi.co/api/v2/pokemon";
+  const initialURL = "https://pokeapi.co/api/v2/pokemon?limit=30";
   const [loading, setLoading] = useState(true);
   const [pokemonData, setPokemonData] = useState([]);
   const [nextURL, setNextURL] = useState("");
@@ -57,38 +57,44 @@ function App() {
   };
 
   return (
-    <>
+    <div className="bg-blue-100">
       <Navbar />
-      <div className="App mx-1 mt-16 mb-10">
-        {loading ? (
-          <h1 className="mt-20">Now Loading...</h1>
-        ) : (
-          <>
-            <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
-              {pokemonData.map((pokemon, i) => {
-                return <Card key={i} pokemon={pokemon} />;
-              })}
+      <div className="text-center py-14">
+        <div className="container mx-auto">
+          {loading ? (
+            <div>
+              <h1 className="mt-20">Now Loading...</h1>
             </div>
-            <div className="pager inline-flex">
-              <button
-                type="button"
-                onClick={prevPage}
-                className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-l"
-              >
-                Prev
-              </button>
-              <button
-                type="button"
-                onClick={nextPage}
-                className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-r"
-              >
-                Next
-              </button>
-            </div>
-          </>
-        )}
+          ) : (
+            <>
+              <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
+                {pokemonData.map((pokemon, i) => {
+                  return <Card key={i} pokemon={pokemon} />;
+                })}
+              </div>
+              <div className="pager">
+                <div className="inline-flex my-4">
+                  <button
+                    type="button"
+                    onClick={prevPage}
+                    className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-l"
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextPage}
+                    className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-r"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
