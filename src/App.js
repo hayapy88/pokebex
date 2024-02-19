@@ -4,6 +4,7 @@ import { getAllPokemon, getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import Loading from "./components/Loading/Loading.js";
+// import Search from "./components/Search/Search.js";
 
 function App() {
   const initialURL = "https://pokeapi.co/api/v2/pokemon?limit=30";
@@ -72,6 +73,7 @@ function App() {
           <Navbar />
           <div className="text-center py-14">
             <div className="container mx-auto">
+              {/* <Search /> */}
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
                 {pokemonData.map((pokemon, i) => {
                   return <Card key={i} pokemon={pokemon} />;
