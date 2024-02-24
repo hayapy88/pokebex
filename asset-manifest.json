@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/pokebox/static/css/main.f5380350.css",
+    "main.js": "/pokebox/static/js/main.e516e34a.js",
+    "index.html": "/pokebox/index.html",
+    "main.f5380350.css.map": "/pokebox/static/css/main.f5380350.css.map",
+    "main.e516e34a.js.map": "/pokebox/static/js/main.e516e34a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f5380350.css",
+    "static/js/main.e516e34a.js"
+  ]
+}
