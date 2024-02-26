@@ -1,6 +1,9 @@
 import React from "react";
 
-const Loadmore = ({ showMorePokemon }) => {
+const Loadmore = ({ showMorePokemon, visible, totalPokemon }) => {
+  if (visible >= totalPokemon) {
+    return <p>All Pokémon data is displayed!</p>;
+  }
   return (
     <div>
       <button

@@ -9,7 +9,8 @@ import Loadmore from "./components/Pagination/Loadmore.js";
 // import Search from "./components/Search/Search.js";
 
 function App() {
-  const initialURL = "https://pokeapi.co/api/v2/pokemon?limit=493";
+  const totalPokemon = 493;
+  const initialURL = "https://pokeapi.co/api/v2/pokemon?limit=" + totalPokemon;
   const [loading, setLoading] = useState(true);
   const [pokemonData, setPokemonData] = useState([]);
   const [visible, setVisible] = useState(30);
@@ -85,7 +86,12 @@ function App() {
                   return <Card key={i} pokemon={pokemon} />;
                 })}
               </div>
-              <Loadmore showMorePokemon={showMorePokemon} />
+
+              <Loadmore
+                showMorePokemon={showMorePokemon}
+                visible={visible}
+                totalPokemon={totalPokemon}
+              />
               {/* <Pagination
                 handlePrevPage={handlePrevPage}
                 handleNextPage={handleNextPage}
