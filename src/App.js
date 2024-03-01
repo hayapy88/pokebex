@@ -5,6 +5,7 @@ import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import Loading from "./components/Loading/Loading.js";
 import Loadmore from "./components/Pagination/Loadmore.js";
+import Search from "./components/Search/Search.js";
 // import Pagination from "./components/Pagination/Pagination.js";
 // import Search from "./components/Search/Search.js";
 
@@ -80,7 +81,7 @@ function App() {
           <Navbar />
           <div className="text-center py-14">
             <div className="container mx-auto">
-              {/* <Search /> */}
+              <Search />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
                 {pokemonData.slice(0, visible).map((pokemon, i) => {
                   return <Card key={i} pokemon={pokemon} />;
