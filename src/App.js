@@ -31,7 +31,7 @@ function App() {
       }, 2000);
     };
     fetchPokemonData();
-  }, []);
+  }, [initialURL]);
   const loadPokemon = async (data) => {
     let _pokemonData = await Promise.all(
       data.map((pokemon) => {

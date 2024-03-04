@@ -1,8 +1,9 @@
 import { React, useState } from "react";
 
 const Search = () => {
-  const [input, setInput] = useState("");
-  const handleSearchInput = () => {};
+  const [search, setSearch] = useState("");
+  console.log(search);
+  const handleSearch = () => {};
   return (
     <>
       <div className="my-4 mx-2 text-left">
@@ -11,12 +12,11 @@ const Search = () => {
           id="username"
           type="text"
           placeholder="Search Pokemon..."
-          onKeyUp={setInput}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
     </>
   );
-  console.log();
 };
 
 export default Search;
