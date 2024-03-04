@@ -15,6 +15,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [pokemonData, setPokemonData] = useState([]);
   const [visible, setVisible] = useState(30);
+  const [query, setQuery] = useState("");
   // const [nextURL, setNextURL] = useState("");
   // const [prevURL, setPrevURL] = useState("");
   useEffect(() => {
@@ -41,6 +42,12 @@ function App() {
       })
     );
     setPokemonData(_pokemonData);
+  };
+  const filteredPokemonData = pokemonData.filter((pokemon) =>
+    pokemon.name.toLowerCase().includes(query.toLowerCase())
+  );
+  const handleInputChange = (newQuery) => {
+    setQuery(newQuery);
   };
 
   // console.log(pokemonData);
@@ -81,9 +88,9 @@ function App() {
           <Navbar />
           <div className="text-center py-14">
             <div className="container mx-auto">
-              <Search />
+              <Search onSearchChange={handleInputChange} />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
-                {pokemonData.slice(0, visible).map((pokemon, i) => {
+                {filteredPokemonData.slice(0, visible).map((pokemon, i) => {
                   return <Card key={i} pokemon={pokemon} />;
                 })}
               </div>

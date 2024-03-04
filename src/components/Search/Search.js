@@ -1,9 +1,6 @@
-import { React, useState } from "react";
+import { React } from "react";
 
-const Search = () => {
-  const [search, setSearch] = useState("");
-  console.log(search);
-  const handleSearch = () => {};
+const Search = ({ onSearchChange }) => {
   return (
     <>
       <div className="my-4 mx-2 text-left">
@@ -12,7 +9,7 @@ const Search = () => {
           id="username"
           type="text"
           placeholder="Search Pokemon..."
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
     </>
