@@ -86,10 +86,10 @@ function App() {
       ) : (
         <div className="bg-blue-100">
           <Navbar />
-          <div className="text-center py-14">
+          <div className="text-center py-12">
             <div className="container mx-auto">
               <Search onSearchChange={handleInputChange} />
-              <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 my-4">
+              <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
                 {filteredPokemonData.slice(0, visible).map((pokemon, i) => {
                   return <Card key={i} pokemon={pokemon} />;
                 })}
