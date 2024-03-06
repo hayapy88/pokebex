@@ -32,6 +32,19 @@ const handleToggleTypes = () => {
   }
 };
 
+const handleTypeClick = (e) => {
+  const type = e.target.getAttribute("data-type");
+
+  const currentTypeIcon = document.querySelector("img.active");
+  console.log(type);
+  if (currentTypeIcon) {
+    currentTypeIcon.classList.remove("active");
+    currentTypeIcon.classList.remove("drop-shadow-5px");
+  }
+  e.target.classList.add("active");
+  e.target.classList.add("drop-shadow-5px");
+};
+
 const IconsGallery = ({ icons, typeIcons }) => (
   <div className="absolute top-2.5 right-3 sm:top-auto w-20 sm:w-72 py-1.5 bg-slate-500 sm:bg-transparent rounded">
     <button className="text-white sm:hidden" onClick={handleToggleTypes}>
@@ -39,14 +52,16 @@ const IconsGallery = ({ icons, typeIcons }) => (
     </button>
     <div
       id="typeIcons"
-      className="hidden sm:flex items-center justify-center flex-wrap mt-1"
+      className="hidden sm:flex items-center justify-center flex-wrap mt-1 sm:mt-0"
     >
       {icons.map((icon, index) => (
         <img
-          className="w-6 h-6 my-0.5 mx-1 sm:ml-2 sm:mr-0"
+          className="typeIcon w-6 h-6 my-0.5 mx-1 sm:ml-2 sm:mr-0"
           key={index}
           src={icon}
           alt={`Type: ${typeIcons[index]}`}
+          data-type={`${typeIcons[index]}`}
+          onClick={handleTypeClick}
         />
       ))}
     </div>

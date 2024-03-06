@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      dropShadow: {
+        "5px": "0 0 5px #0284c7",
+      },
+    },
   },
   plugins: [],
 };
