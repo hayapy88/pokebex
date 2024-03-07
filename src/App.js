@@ -16,6 +16,7 @@ function App() {
   const [pokemonData, setPokemonData] = useState([]);
   const [visible, setVisible] = useState(30);
   const [query, setQuery] = useState("");
+  const [activeType, setActiveType] = useState([]);
   // const [nextURL, setNextURL] = useState("");
   // const [prevURL, setPrevURL] = useState("");
   useEffect(() => {
@@ -49,6 +50,16 @@ function App() {
   const handleInputChange = (newQuery) => {
     setQuery(newQuery);
   };
+  const handleTypeClick = (newType) => {
+    setActiveType((prevActiveType) => {
+      if (prevActiveType.includes(newType)) {
+        return prevActiveType.filter((type) => type !== newType);
+      } else {
+        return [...prevActiveType, newType];
+      }
+    });
+  };
+  console.log(activeType);
 
   // console.log(pokemonData);
 
@@ -88,7 +99,11 @@ function App() {
           <Navbar />
           <div className="text-center py-12">
             <div className="container mx-auto">
-              <Search onSearchChange={handleInputChange} />
+              <Search
+                onSearchChange={handleInputChange}
+                onTypeClick={handleTypeClick}
+                activeType={activeType}
+              />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
                 {filteredPokemonData.slice(0, visible).map((pokemon, i) => {
                   return <Card key={i} pokemon={pokemon} />;
