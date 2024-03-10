@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar/Navbar.js";
 import Loading from "./components/Loading/Loading.js";
 // import Loadmore from "./components/Pagination/Loadmore.js";
 import Search from "./components/Search/Search.js";
-import InfinityScroll from "./components/Pagination/InfinityScroll.js";
+import InfiniteScroll from "./components/Pagination/InfiniteScroll.js";
 // import Pagination from "./components/Pagination/Pagination.js";
 // import Search from "./components/Search/Search.js";
 
@@ -139,7 +139,7 @@ function App() {
                 })}
               </div>
 
-              <InfinityScroll />
+              <InfiniteScroll />
 
               {/* <Loadmore
                 showMorePokemon={showMorePokemon}
