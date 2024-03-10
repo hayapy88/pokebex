@@ -44,9 +44,12 @@ function App() {
     );
     setPokemonData(_pokemonData);
   };
-  const filteredPokemonData = pokemonData.filter((pokemon) =>
-    pokemon.name.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredPokemonData = pokemonData.filter((pokemon) => {
+    return (
+      pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+      pokemon.types.some((type) => activeType.includes(type.type.name))
+    );
+  });
   const handleInputChange = (newQuery) => {
     setQuery(newQuery);
   };

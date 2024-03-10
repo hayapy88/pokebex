@@ -1,5 +1,5 @@
 import { React } from "react";
-const typeIcons = [
+const pokemonTypes = [
   "bug",
   "dark",
   "dragon",
@@ -29,12 +29,12 @@ const icons = importTypeIconsAll(
 );
 
 const handleToggleTypes = () => {
-  const typeIcons = document.getElementById("typeIcons");
-  if (typeIcons.classList.contains("hidden")) {
-    typeIcons.classList.remove("hidden");
-    typeIcons.classList.add("flex");
+  const typeIconsElm = document.getElementById("typeIcons");
+  if (typeIconsElm.classList.contains("hidden")) {
+    typeIconsElm.classList.remove("hidden");
+    typeIconsElm.classList.add("flex");
   } else {
-    typeIcons.classList.add("hidden");
+    typeIconsElm.classList.add("hidden");
   }
 };
 
@@ -45,7 +45,7 @@ const handleTypeSelect = (e, onTypeClick) => {
   onTypeClick(type);
 };
 
-const IconsGallery = ({ icons, typeIcons, onTypeClick, activeType }) => (
+const IconsGallery = ({ icons, pokemonTypes, onTypeClick, activeType }) => (
   <div className="absolute top-2.5 right-3 sm:top-auto w-20 sm:w-72 py-1.5 bg-slate-500 sm:bg-transparent rounded">
     <button className="text-white sm:hidden" onClick={handleToggleTypes}>
       Type ▼
@@ -57,12 +57,12 @@ const IconsGallery = ({ icons, typeIcons, onTypeClick, activeType }) => (
       {icons.map((icon, index) => (
         <img
           className={`typeIcon w-6 h-6 my-0.5 mx-1 sm:ml-2 sm:mr-0 ${
-            activeType.includes(typeIcons[index]) ? "drop-shadow-5px" : ""
+            activeType.includes(pokemonTypes[index]) ? "drop-shadow-5px" : ""
           }`}
           key={index}
           src={icon}
-          alt={`Type: ${typeIcons[index]}`}
-          data-type={`${typeIcons[index]}`}
+          alt={`Type: ${pokemonTypes[index]}`}
+          data-type={`${pokemonTypes[index]}`}
           onClick={(e) => handleTypeSelect(e, onTypeClick)}
         />
       ))}
@@ -83,7 +83,7 @@ const Search = ({ onSearchChange, onTypeClick, activeType }) => {
         />
         <IconsGallery
           icons={icons}
-          typeIcons={typeIcons}
+          pokemonTypes={pokemonTypes}
           onTypeClick={onTypeClick}
           activeType={activeType}
         />
