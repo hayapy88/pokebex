@@ -12,11 +12,31 @@ import Search from "./components/Search/Search.js";
 function App() {
   const totalPokemon = 493;
   const initialURL = "https://pokeapi.co/api/v2/pokemon?limit=" + totalPokemon;
+  const pokemonTypes = [
+    "bug",
+    "dark",
+    "dragon",
+    "electric",
+    "fairy",
+    "fight",
+    "fire",
+    "flying",
+    "ghost",
+    "grass",
+    "ground",
+    "ice",
+    "normal",
+    "poison",
+    "psychic",
+    "rock",
+    "steel",
+    "water",
+  ];
   const [loading, setLoading] = useState(true);
   const [pokemonData, setPokemonData] = useState([]);
   const [visible, setVisible] = useState(30);
   const [query, setQuery] = useState("");
-  const [activeType, setActiveType] = useState([]);
+  const [activeType, setActiveType] = useState(pokemonTypes);
   // const [nextURL, setNextURL] = useState("");
   // const [prevURL, setPrevURL] = useState("");
   useEffect(() => {
@@ -106,6 +126,7 @@ function App() {
                 onSearchChange={handleInputChange}
                 onTypeClick={handleTypeClick}
                 activeType={activeType}
+                pokemonTypes={pokemonTypes}
               />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
                 {filteredPokemonData.slice(0, visible).map((pokemon, i) => {

@@ -1,24 +1,4 @@
 import { React } from "react";
-const pokemonTypes = [
-  "bug",
-  "dark",
-  "dragon",
-  "electric",
-  "fairy",
-  "fight",
-  "fire",
-  "flying",
-  "ghost",
-  "grass",
-  "ground",
-  "ice",
-  "normal",
-  "poison",
-  "psychic",
-  "rock",
-  "steel",
-  "water",
-];
 
 function importTypeIconsAll(r) {
   return r.keys().map(r);
@@ -70,7 +50,7 @@ const IconsGallery = ({ icons, pokemonTypes, onTypeClick, activeType }) => (
   </div>
 );
 
-const Search = ({ onSearchChange, onTypeClick, activeType }) => {
+const Search = ({ onSearchChange, onTypeClick, activeType, pokemonTypes }) => {
   return (
     <>
       <div className="container fixed top-12 left-1/2 -translate-x-1/2 flex items-center justify-between sm:flex-wrap w-full h-14 sm:h-20 px-3 sm:px-2 bg-blue-100">
