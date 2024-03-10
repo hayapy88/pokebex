@@ -4,8 +4,9 @@ import { getAllPokemon, getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import Loading from "./components/Loading/Loading.js";
-import Loadmore from "./components/Pagination/Loadmore.js";
+// import Loadmore from "./components/Pagination/Loadmore.js";
 import Search from "./components/Search/Search.js";
+import InfinityScroll from "./components/Pagination/InfinityScroll.js";
 // import Pagination from "./components/Pagination/Pagination.js";
 // import Search from "./components/Search/Search.js";
 
@@ -34,7 +35,7 @@ function App() {
   ];
   const [loading, setLoading] = useState(true);
   const [pokemonData, setPokemonData] = useState([]);
-  const [visible, setVisible] = useState(30);
+  // const [visible, setVisible] = useState(30);
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState(pokemonTypes);
   // const [nextURL, setNextURL] = useState("");
@@ -110,9 +111,9 @@ function App() {
   //   }, 2000);
   // };
 
-  const showMorePokemon = () => {
-    setVisible((prevValue) => prevValue + 30);
-  };
+  // const showMorePokemon = () => {
+  //   setVisible((prevValue) => prevValue + 30);
+  // };
   return (
     <>
       {loading ? (
@@ -128,17 +129,23 @@ function App() {
                 activeType={activeType}
                 pokemonTypes={pokemonTypes}
               />
-              <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
+              {/* <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
                 {filteredPokemonData.slice(0, visible).map((pokemon, i) => {
+                  return <Card key={i} pokemon={pokemon} />;
+                })} */}
+              <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
+                {filteredPokemonData.map((pokemon, i) => {
                   return <Card key={i} pokemon={pokemon} />;
                 })}
               </div>
 
-              <Loadmore
+              <InfinityScroll />
+
+              {/* <Loadmore
                 showMorePokemon={showMorePokemon}
                 visible={visible}
                 totalPokemon={totalPokemon}
-              />
+              /> */}
               {/* <Pagination
                 handlePrevPage={handlePrevPage}
                 handleNextPage={handleNextPage}
