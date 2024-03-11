@@ -74,6 +74,15 @@ function App() {
   const handleInputChange = (newQuery) => {
     setQuery(newQuery);
   };
+  const handleAllTypes = () => {
+    if (activeType.length >= 1) {
+      console.log("All Off");
+      setActiveType([]);
+    } else {
+      console.log("All On");
+      setActiveType(pokemonTypes);
+    }
+  };
   const handleTypeClick = (newType) => {
     setActiveType((prevActiveType) => {
       if (prevActiveType.includes(newType)) {
@@ -128,6 +137,7 @@ function App() {
                 onTypeClick={handleTypeClick}
                 activeType={activeType}
                 pokemonTypes={pokemonTypes}
+                handleAllTypes={handleAllTypes}
               />
               {/* <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
                 {filteredPokemonData.slice(0, visible).map((pokemon, i) => {

@@ -10,11 +10,17 @@ const icons = importTypeIconsAll(
 
 const handleToggleTypes = () => {
   const typeIconsElm = document.getElementById("typeIcons");
-  if (typeIconsElm.classList.contains("hidden")) {
+  const allTypesElm = document.getElementById("allTypes");
+  if (
+    typeIconsElm.classList.contains("hidden") ||
+    allTypesElm.classList.contains("hidden")
+  ) {
     typeIconsElm.classList.remove("hidden");
+    allTypesElm.classList.remove("hidden");
     typeIconsElm.classList.add("flex");
   } else {
     typeIconsElm.classList.add("hidden");
+    allTypesElm.classList.add("hidden");
   }
 };
 
@@ -25,32 +31,55 @@ const handleTypeSelect = (e, onTypeClick) => {
   onTypeClick(type);
 };
 
-const IconsGallery = ({ icons, pokemonTypes, onTypeClick, activeType }) => (
-  <div className="absolute top-2.5 right-3 sm:top-auto w-20 sm:w-72 py-1.5 bg-slate-500 sm:bg-transparent rounded">
-    <button className="text-white sm:hidden" onClick={handleToggleTypes}>
-      Type ▼
+const IconsGallery = ({
+  icons,
+  pokemonTypes,
+  onTypeClick,
+  activeType,
+  handleAllTypes,
+}) => (
+  <div className="absolute sm:relative top-2.5 right-3 sm:top-auto sm:right-0 flex flex-col sm:flex-row flex-wrap items-center py-1.5 bg-slate-500 sm:bg-transparent rounded">
+    <button className="text-white sm:hidden px-1" onClick={handleToggleTypes}>
+      Types ▼
+    </button>
+    <button
+      id="allTypes"
+      className="hidden w-14 h-14 mt-1 sm:mt-0 text-xs text-white font-bold leading-tight bg-slate-400 rounded-full"
+      onClick={handleAllTypes}
+    >
+      ALL<br></br>ON/OFF
     </button>
     <div
       id="typeIcons"
-      className="hidden sm:flex items-center justify-center flex-wrap mt-1 sm:mt-0"
+      className="hidden sm:flex items-center justify-center flex-wrap w-20 sm:w-72 mt-1 sm:mt-0"
     >
       {icons.map((icon, index) => (
-        <img
-          className={`typeIcon w-6 h-6 my-0.5 mx-1 sm:ml-2 sm:mr-0 ${
-            activeType.includes(pokemonTypes[index]) ? "drop-shadow-5px" : ""
+        <div
+          className={`typeIcon my-1 mx-1 sm:ml-2 sm:mr-0 cursor-pointer ${
+            activeType.includes(pokemonTypes[index]) ? "active" : ""
           }`}
           key={index}
-          src={icon}
-          alt={`Type: ${pokemonTypes[index]}`}
-          data-type={`${pokemonTypes[index]}`}
-          onClick={(e) => handleTypeSelect(e, onTypeClick)}
-        />
+        >
+          <img
+            className={"typeIconImage w-6 h-6"}
+            src={icon}
+            alt={`Type: ${pokemonTypes[index]}`}
+            data-type={`${pokemonTypes[index]}`}
+            onClick={(e) => handleTypeSelect(e, onTypeClick)}
+          />
+        </div>
       ))}
     </div>
   </div>
 );
 
-const Search = ({ onSearchChange, onTypeClick, activeType, pokemonTypes }) => {
+const Search = ({
+  onSearchChange,
+  onTypeClick,
+  activeType,
+  pokemonTypes,
+  handleAllTypes,
+}) => {
   return (
     <>
       <div className="container fixed top-12 left-1/2 -translate-x-1/2 flex items-center justify-between sm:flex-wrap w-full h-14 sm:h-20 px-3 sm:px-2 bg-blue-100">
@@ -66,6 +95,7 @@ const Search = ({ onSearchChange, onTypeClick, activeType, pokemonTypes }) => {
           pokemonTypes={pokemonTypes}
           onTypeClick={onTypeClick}
           activeType={activeType}
+          handleAllTypes={handleAllTypes}
         />
       </div>
     </>

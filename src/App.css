@@ -1,0 +1,20 @@
+.typeIcon {
+  position: relative;
+  z-index: 1;
+}
+.typeIcon:before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  left: -2px;
+  background-color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  z-index: -1;
+}
+.typeIcon.active:before {
+  background-color: gold;
+}
