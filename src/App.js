@@ -19,7 +19,7 @@ function App() {
     "dragon",
     "electric",
     "fairy",
-    "fight",
+    "fighting",
     "fire",
     "flying",
     "ghost",

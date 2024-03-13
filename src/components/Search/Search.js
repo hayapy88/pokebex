@@ -88,7 +88,7 @@ const Search = ({
             className="search relative placeholder-slate-400 shadow appearance-none border rounded w-48 h-8 py-2 pl-3 pr-6 text-gray-700 leading-tight focus:outline-none focus:shadow-outline)]"
             id="username"
             type="text"
-            placeholder="Search Pokemon..."
+            placeholder="Search Pokémon..."
             onChange={(e) => onSearchChange(e.target.value)}
           />
           <svg
