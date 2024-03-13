@@ -44,7 +44,7 @@ const IconsGallery = ({
     </button>
     <button
       id="allTypes"
-      className="hidden w-14 h-14 mt-1 sm:mt-0 text-xs text-white font-bold leading-tight bg-slate-400 rounded-full"
+      className="hidden sm:block w-14 h-14 mt-1 sm:mt-0 text-xs text-white font-bold leading-tight bg-slate-400 rounded-full"
       onClick={handleAllTypes}
     >
       ALL<br></br>ON/OFF
@@ -83,13 +83,29 @@ const Search = ({
   return (
     <>
       <div className="container fixed top-12 left-1/2 -translate-x-1/2 flex items-center justify-between sm:flex-wrap w-full h-14 sm:h-20 px-3 sm:px-2 bg-blue-100">
-        <input
-          className="search relative placeholder-slate-400 shadow appearance-none border rounded w-50 h-8 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline)]"
-          id="username"
-          type="text"
-          placeholder="Search Pokemon..."
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
+        <div className="relative">
+          <input
+            className="search relative placeholder-slate-400 shadow appearance-none border rounded w-48 h-8 py-2 pl-3 pr-6 text-gray-700 leading-tight focus:outline-none focus:shadow-outline)]"
+            id="username"
+            type="text"
+            placeholder="Search Pokemon..."
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2.5}
+            stroke="gray"
+            className="absolute right-1 top-1.5 w-5 h-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            />
+          </svg>
+        </div>
         <IconsGallery
           icons={icons}
           pokemonTypes={pokemonTypes}
