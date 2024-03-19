@@ -37,6 +37,7 @@ function App() {
   const [activeType, setActiveType] = useState(pokemonTypes);
 
   useEffect(() => {
+    let mount = true;
     const fetchPokemonData = async () => {
       // Update Pokemon URL
       const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${
@@ -58,19 +59,25 @@ function App() {
             return pokemonRecord;
           })
         );
-        setPokemonData((prevPokemonData) => [
-          ...prevPokemonData,
-          ..._pokemonData,
-        ]);
+        if (mount) {
+          setPokemonData((prevPokemonData) => [
+            ...prevPokemonData,
+            ..._pokemonData,
+          ]);
+        }
+
         console.log("_pokemonData");
         console.log(_pokemonData);
       };
 
       getEachPokemonData(res.results);
       console.log(res.results);
-      setLoading(false);
+      if (mount) setLoading(false);
     };
     fetchPokemonData();
+    return () => {
+      mount = false;
+    };
   }, [page]);
 
   const displayablePokemonArray = pokemonData.filter((pokemon) => {
