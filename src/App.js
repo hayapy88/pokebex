@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./App.css";
 import { getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
@@ -10,6 +10,7 @@ import InfiniteScroll from "./components/Pagination/InfiniteScroll.js";
 function App() {
   // const totalPokemon = 493;
   const [page, setPage] = useState(1);
+  const loader = useRef(null);
 
   const pokemonTypes = [
     "bug",
@@ -35,6 +36,28 @@ function App() {
   const [pokemonData, setPokemonData] = useState([]);
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState(pokemonTypes);
+
+  useEffect(() => {
+    var options = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 1.0,
+    };
+
+    const observer = new IntersectionObserver(handleObserver, options);
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleObserver = (entities) => {
+    const target = entities[0];
+    if (target.isIntersecting) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
   useEffect(() => {
     let mount = true;
@@ -133,8 +156,11 @@ function App() {
                   return <Card key={i} pokemon={pokemon} />;
                 })}
               </div>
-              <button onClick={() => setPage((prev) => prev + 1)}>Load</button>
-              <InfiniteScroll />
+              {/* <button onClick={() => setPage((prev) => prev + 1)}>Load</button> */}
+              <div ref={loader} style={{ height: "100px", margin: "30px" }}>
+                <span>Loading...</span>
+              </div>
+              {/* <InfiniteScroll /> */}
             </div>
           </div>
         </div>
