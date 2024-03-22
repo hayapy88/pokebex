@@ -5,7 +5,6 @@ import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import Loading from "./components/Loading/Loading.js";
 import Search from "./components/Search/Search.js";
-import InfiniteScroll from "./components/Pagination/InfiniteScroll.js";
 
 function App() {
   // const totalPokemon = 493;
@@ -160,7 +159,6 @@ function App() {
               <div ref={loader} style={{ height: "100px", margin: "30px" }}>
                 <span>Loading...</span>
               </div>
-              {/* <InfiniteScroll /> */}
             </div>
           </div>
         </div>

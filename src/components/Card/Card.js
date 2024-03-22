@@ -17,6 +17,9 @@ const Card = ({ pokemon }) => {
         {pokemon.name}
       </h3>
       <div className="cardTypes flex justify-center">
+        <p className="font-bold">No: {pokemon.id}</p>
+      </div>
+      <div className="cardTypes flex justify-center">
         <p className="font-bold">Type:</p>
         <Types types={pokemon.types} />
       </div>
