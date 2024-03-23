@@ -7,8 +7,7 @@ import Loading from "./components/Loading/Loading.js";
 import Search from "./components/Search/Search.js";
 
 function App() {
-  // const totalPokemon = 493;
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const loader = useRef(null);
 
   const pokemonTypes = [
@@ -31,10 +30,10 @@ function App() {
     "steel",
     "water",
   ];
-  const [loading, setLoading] = useState(true);
-  const [pokemonData, setPokemonData] = useState([]);
-  const [query, setQuery] = useState("");
-  const [activeType, setActiveType] = useState(pokemonTypes);
+  const [centerLoading, setCenterLoading] = useState(false); // Center Loadig
+  const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
+  const [query, setQuery] = useState(""); // Query for search Pokemon
+  const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
   useEffect(() => {
     var options = {
@@ -59,6 +58,7 @@ function App() {
   };
 
   useEffect(() => {
+    setCenterLoading(true);
     let mount = true;
     const fetchPokemonData = async () => {
       // Update Pokemon URL
@@ -94,7 +94,7 @@ function App() {
 
       getEachPokemonData(res.results);
       console.log(res.results);
-      if (mount) setLoading(false);
+      if (mount) setCenterLoading(false);
     };
     fetchPokemonData();
     return () => {
@@ -103,6 +103,7 @@ function App() {
   }, [page]);
 
   const displayablePokemonArray = pokemonData.filter((pokemon) => {
+    // Fister Pokemon by Keyword Search
     return (
       pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
       pokemon.types.some((type) => activeType.includes(type.type.name))
@@ -110,9 +111,11 @@ function App() {
   });
 
   const handleInputChange = (newQuery) => {
+    // Get Key word for Search from Search box
     setQuery(newQuery);
   };
   const handleAllTypes = () => {
+    // Pokemon Types All ON / All Off
     if (activeType.length >= 1) {
       console.log("All Off");
       setActiveType([]);
@@ -121,12 +124,13 @@ function App() {
       setActiveType(pokemonTypes);
     }
   };
-  const handleTypeClick = (newType) => {
+  const handleTypeClick = (clickedType) => {
+    // Update active types by clicked type
     setActiveType((prevActiveType) => {
-      if (prevActiveType.includes(newType)) {
-        return prevActiveType.filter((type) => type !== newType);
+      if (prevActiveType.includes(clickedType)) {
+        return prevActiveType.filter((type) => type !== clickedType); // As they are
       } else {
-        return [...prevActiveType, newType];
+        return [...prevActiveType, clickedType]; // Add the type
       }
     });
   };
@@ -136,7 +140,7 @@ function App() {
 
   return (
     <>
-      {loading ? (
+      {centerLoading ? (
         <Loading />
       ) : (
         <div className="bg-blue-100">
@@ -152,7 +156,13 @@ function App() {
               />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
                 {displayablePokemonArray.map((pokemon, i) => {
-                  return <Card key={i} pokemon={pokemon} />;
+                  return (
+                    <Card
+                      key={i}
+                      pokemon={pokemon}
+                      // ref={i === pokemon.length - 1 ? lastItemRef : null}
+                    />
+                  );
                 })}
               </div>
               {/* <button onClick={() => setPage((prev) => prev + 1)}>Load</button> */}
