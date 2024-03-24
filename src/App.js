@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import "./App.css";
 import { getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
@@ -8,7 +8,21 @@ import Search from "./components/Search/Search.js";
 
 function App() {
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
-  const loader = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const observer = useRef();
+  const lastItemRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      });
+      if (node) observer.current.observer(node);
+    },
+    [loading]
+  );
 
   const pokemonTypes = [
     "bug",
@@ -36,30 +50,9 @@ function App() {
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
   useEffect(() => {
-    var options = {
-      root: null,
-      rootMargin: "20px",
-      threshold: 1.0,
-    };
-
-    const observer = new IntersectionObserver(handleObserver, options);
-    if (loader.current) {
-      observer.observe(loader.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const handleObserver = (entities) => {
-    const target = entities[0];
-    if (target.isIntersecting) {
-      setPage((prev) => prev + 1);
-    }
-  };
-
-  useEffect(() => {
     setCenterLoading(true);
     let mount = true;
+    setLoading(true);
     const fetchPokemonData = async () => {
       // Update Pokemon URL
       const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${
@@ -77,7 +70,7 @@ function App() {
         let _pokemonData = await Promise.all(
           data.map((pokemon) => {
             console.log(pokemon);
-            let pokemonRecord = getPokemon(pokemon.url);
+            let pokemonRecord = getPokemon(pokemon.url); // The result from calling API
             return pokemonRecord;
           })
         );
@@ -94,7 +87,8 @@ function App() {
 
       getEachPokemonData(res.results);
       console.log(res.results);
-      if (mount) setCenterLoading(false);
+      setCenterLoading(false);
+      setLoading(false);
     };
     fetchPokemonData();
     return () => {
@@ -155,20 +149,17 @@ function App() {
                 handleAllTypes={handleAllTypes}
               />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
-                {displayablePokemonArray.map((pokemon, i) => {
+                {displayablePokemonArray.map((pokemon, index) => {
                   return (
                     <Card
-                      key={i}
+                      key={index}
                       pokemon={pokemon}
-                      // ref={i === pokemon.length - 1 ? lastItemRef : null}
+                      ref={index === pokemon.length - 1 ? lastItemRef : null}
                     />
                   );
                 })}
               </div>
-              {/* <button onClick={() => setPage((prev) => prev + 1)}>Load</button> */}
-              <div ref={loader} style={{ height: "100px", margin: "30px" }}>
-                <span>Loading...</span>
-              </div>
+              {loading && <p>Loading...</p>}
             </div>
           </div>
         </div>
