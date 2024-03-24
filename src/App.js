@@ -3,7 +3,7 @@ import "./App.css";
 import { getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
-import Loading from "./components/Loading/Loading.js";
+import CenterLoading from "./components/Loading/CenterLoading.js";
 import Search from "./components/Search/Search.js";
 
 function App() {
@@ -141,7 +141,7 @@ function App() {
   return (
     <>
       {centerLoading ? (
-        <Loading />
+        <CenterLoading />
       ) : (
         <div className="bg-blue-100">
           <Navbar />
