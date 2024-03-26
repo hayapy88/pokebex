@@ -19,7 +19,7 @@ function App() {
           setPage((prev) => prev + 1);
         }
       });
-      if (node) observer.current.observer(node);
+      if (node) observer.current.observe(node);
     },
     [loading]
   );
@@ -50,7 +50,7 @@ function App() {
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
   useEffect(() => {
-    setCenterLoading(true);
+    // setCenterLoading(true);
     let mount = true;
     setLoading(true);
     const fetchPokemonData = async () => {
@@ -154,7 +154,11 @@ function App() {
                     <Card
                       key={index}
                       pokemon={pokemon}
-                      ref={index === pokemon.length - 1 ? lastItemRef : null}
+                      ref={
+                        index === displayablePokemonArray.length - 1
+                          ? lastItemRef
+                          : null
+                      }
                     />
                   );
                 })}

@@ -1,14 +1,14 @@
 import React from "react";
 import Types from "./Types";
 
-const Card = ({ pokemon, index, lastItemRef }) => {
+const Card = React.forwardRef(({ pokemon, index }, ref) => {
   const meterHeight = pokemon.height / 10;
   const kgWeight = pokemon.weight / 10;
   return (
     <div
       className="card mx-3 sm:mx-2 p-8 bg-blue-50 border rounded shadow-lg"
       key={index}
-      ref={index === pokemon.length - 1 ? lastItemRef : null}
+      ref={ref}
     >
       <div className="cardImg">
         <img
@@ -45,6 +45,6 @@ const Card = ({ pokemon, index, lastItemRef }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Card;
