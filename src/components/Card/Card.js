@@ -24,9 +24,6 @@ const Card = React.forwardRef(({ pokemon, index }, ref) => {
         <p className="font-bold">No: {pokemon.id}</p>
       </div>
       <div className="cardTypes flex justify-center">
-        <p className="font-bold">Key: {index}</p>
-      </div>
-      <div className="cardTypes flex justify-center">
         <p className="font-bold">Type:</p>
         <Types types={pokemon.types} />
       </div>
