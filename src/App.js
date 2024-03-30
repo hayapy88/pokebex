@@ -17,6 +17,7 @@ function App() {
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           setPage((prev) => prev + 1);
+          setLoading(false);
         }
       });
       if (node) observer.current.observe(node);
