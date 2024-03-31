@@ -50,14 +50,20 @@ function App() {
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
+  const offset = `${30 * (page - 1)}`;
+
   useEffect(() => {
     let mount = true;
+
+    if (offset > 1025) {
+      return;
+    }
+
     setLoading(true);
     const fetchPokemonData = async () => {
       // Update Pokemon URL
-      const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${
-        30 * (page - 1)
-      }`;
+
+      const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`;
 
       // Get Pokemon name and URL from limited fetchPokemonURL.
       // eg) [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }, {}, {}, ...]
@@ -163,7 +169,7 @@ function App() {
                   );
                 })}
               </div>
-              {loading && <p>Loading...</p>}
+              {loading && offset <= 1025 && <p>Loading...</p>}
               {displayablePokemonArray.length === 0 && (
                 <p>
                   No Pokémon were found under these conditions.
