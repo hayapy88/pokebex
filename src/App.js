@@ -45,13 +45,12 @@ function App() {
     "steel",
     "water",
   ];
-  const [centerLoading, setCenterLoading] = useState(false); // Center Loadig
+  const [centerLoading, setCenterLoading] = useState(true); // Center Loadig
   const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
   useEffect(() => {
-    // setCenterLoading(true);
     let mount = true;
     setLoading(true);
     const fetchPokemonData = async () => {
@@ -80,6 +79,7 @@ function App() {
             ...prevPokemonData,
             ..._pokemonData,
           ]);
+          setLoading(false);
         }
 
         console.log("_pokemonData");
@@ -89,7 +89,6 @@ function App() {
       getEachPokemonData(res.results);
       console.log(res.results);
       setCenterLoading(false);
-      setLoading(false);
     };
     fetchPokemonData();
     return () => {
