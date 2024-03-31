@@ -164,6 +164,14 @@ function App() {
                 })}
               </div>
               {loading && <p>Loading...</p>}
+              {displayablePokemonArray.length === 0 && (
+                <p>
+                  No Pokémon were found under these conditions.
+                  <br />
+                  Try adjusting the Pokémon name or types to see different
+                  results.
+                </p>
+              )}
             </div>
           </div>
         </div>
