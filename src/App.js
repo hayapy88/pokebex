@@ -100,7 +100,7 @@ function App() {
     return () => {
       mount = false;
     };
-  }, [page]);
+  }, [page, offset]);
 
   const displayablePokemonArray = pokemonData.filter((pokemon) => {
     // Fister Pokemon by Keyword Search
@@ -143,7 +143,7 @@ function App() {
       {centerLoading ? (
         <CenterLoading />
       ) : (
-        <div className="bg-blue-100">
+        <div className="h-full bg-blue-100">
           <Navbar />
           <div className="text-center py-12">
             <div className="container mx-auto">
@@ -154,7 +154,7 @@ function App() {
                 pokemonTypes={pokemonTypes}
                 handleAllTypes={handleAllTypes}
               />
-              <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 sm:mt-14 pt-6 mb-4">
+              <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 mt-8 sm:mt-14 pt-6 mb-4">
                 {displayablePokemonArray.map((pokemon, index) => {
                   return (
                     <Card
