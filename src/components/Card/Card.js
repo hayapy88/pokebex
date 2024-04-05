@@ -6,7 +6,7 @@ const Card = React.forwardRef(({ pokemon, index }, ref) => {
   const kgWeight = pokemon.weight / 10;
   return (
     <div
-      className="card mx-3 sm:mx-2 p-8 bg-blue-50 border rounded shadow-lg"
+      className="card mx-3 sm:mx-2 p-8 bg-blue-50 border rounded-lg shadow-lg"
       key={index}
       ref={ref}
     >
