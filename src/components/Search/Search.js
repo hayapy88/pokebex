@@ -38,7 +38,7 @@ const IconsGallery = ({
   activeType,
   handleAllTypes,
 }) => (
-  <div className="absolute sm:relative top-2.5 right-3 sm:top-auto sm:right-0 flex flex-col sm:flex-row flex-wrap items-center py-1.5 bg-slate-500 sm:bg-transparent rounded">
+  <div className="absolute sm:relative top-2.5 right-3 sm:top-auto sm:right-0 flex flex-col sm:flex-row flex-wrap items-center py-1.5 bg-slate-500 sm:bg-transparent rounded-md">
     <button className="text-white sm:hidden px-1" onClick={handleToggleTypes}>
       Types ▼
     </button>

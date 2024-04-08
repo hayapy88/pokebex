@@ -27,7 +27,7 @@ const Types = ({ types }) => {
         const typeClass = typeColors[type.type.name] || "bg-gray-200";
         return (
           <p
-            className={`typeName mx-1 capitalize ${typeClass} text-white py-0.5 px-1 rounded`}
+            className={`typeName mx-1 capitalize ${typeClass} text-white py-0.5 px-1 rounded-md`}
             key={i}
           >
             {type.type.name}
