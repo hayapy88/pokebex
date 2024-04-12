@@ -16,7 +16,7 @@ const Types = ({ types }) => {
     ice: "bg-teal-500/60",
     normal: "bg-gray-400",
     poison: "bg-purple-500",
-    psychic: "bg-rose-400/80",
+    psychic: "bg-rose-500/80",
     rock: "bg-yellow-500/60",
     steel: "bg-teal-700/70",
     water: "bg-blue-500/90",
