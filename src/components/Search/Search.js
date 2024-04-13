@@ -37,17 +37,19 @@ const IconsGallery = ({
   onTypeClick,
   activeType,
   handleAllTypes,
+  t,
 }) => (
   <div className="absolute sm:relative top-2.5 right-3 sm:top-auto sm:right-0 flex flex-col sm:flex-row flex-wrap items-center py-1.5 bg-slate-500 sm:bg-transparent rounded-md">
     <button className="text-white sm:hidden px-1" onClick={handleToggleTypes}>
-      Types ▼
+      {t("type")} ▼
     </button>
     <button
       id="allTypes"
       className="hidden sm:block w-14 h-14 mt-1 sm:mt-0 text-xs text-white font-bold leading-tight bg-slate-400 rounded-full"
       onClick={handleAllTypes}
     >
-      ALL<br></br>ON/OFF
+      {t("typesButtonUpper")}
+      <br></br>ON/OFF
     </button>
     <div
       id="typeIcons"
@@ -79,6 +81,7 @@ const Search = ({
   activeType,
   pokemonTypes,
   handleAllTypes,
+  t,
 }) => {
   return (
     <>
@@ -88,7 +91,7 @@ const Search = ({
             className="search relative placeholder-slate-400 shadow appearance-none border rounded w-48 h-8 py-2 pl-3 pr-6 text-gray-700 leading-tight focus:outline-none focus:shadow-outline)]"
             id="username"
             type="text"
-            placeholder="Search Pokémon..."
+            placeholder={t("search")}
             onChange={(e) => onSearchChange(e.target.value)}
           />
           <svg
@@ -112,6 +115,7 @@ const Search = ({
           onTypeClick={onTypeClick}
           activeType={activeType}
           handleAllTypes={handleAllTypes}
+          t={t}
         />
       </div>
     </>

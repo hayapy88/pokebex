@@ -2,5 +2,38 @@
   "language": {
     "english": "English",
     "japanese": "日本語"
+  },
+  "loading": "Loading Pokémon...",
+  "title": "PokéBox",
+  "search": "Search Pokemon...",
+  "typesButtonUpper": "All",
+  "typesButtonBottom": "ON/OFF",
+  "type": "Type",
+  "height": "Height",
+  "weight": "Weight",
+  "ability": "Ability",
+  "types": {
+    "bug": "bug",
+    "dark": "dark",
+    "dragon": "dragon",
+    "electric": "electric",
+    "fairy": "fairy",
+    "fighting": "fighting",
+    "fire": "fire",
+    "flying": "flying",
+    "ghost": "ghost",
+    "grass": "grass",
+    "ground": "ground",
+    "ice": "ice",
+    "normal": "normal",
+    "poison": "poison",
+    "psychic": "psychic",
+    "rock": "rock",
+    "steel": "steel",
+    "water": "water"
+  },
+  "messages": {
+    "noFound1": "No Pokémon were found under these conditions.",
+    "noFound2": "Try adjusting the Pokémon name or types to see different results."
   }
 }

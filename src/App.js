@@ -146,7 +146,7 @@ function App() {
   return (
     <>
       {centerLoading ? (
-        <CenterLoading />
+        <CenterLoading t={t} />
       ) : (
         <div className="h-full bg-blue-100">
           <Navbar t={t} i18n={i18n} />
@@ -158,6 +158,7 @@ function App() {
                 activeType={activeType}
                 pokemonTypes={pokemonTypes}
                 handleAllTypes={handleAllTypes}
+                t={t}
               />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 mt-8 sm:mt-14 pt-6 mb-4">
                 {displayablePokemonArray.map((pokemon, index) => {
@@ -170,6 +171,7 @@ function App() {
                           ? lastItemRef
                           : null
                       }
+                      t={t}
                     />
                   );
                 })}
@@ -177,10 +179,9 @@ function App() {
               {loading && offset <= 1025 && <p>Loading...</p>}
               {displayablePokemonArray.length === 0 && (
                 <p>
-                  No Pokémon were found under these conditions.
+                  {t("messages.noFound1")}
                   <br />
-                  Try adjusting the Pokémon name or types to see different
-                  results.
+                  {t("messages.noFound2")}
                 </p>
               )}
             </div>
