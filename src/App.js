@@ -5,6 +5,7 @@ import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import CenterLoading from "./components/Loading/CenterLoading.js";
 import Search from "./components/Search/Search.js";
+import { useTranslation } from "react-i18next";
 // import en from ".locales/en.json";
 // import ja from ".locales/ja.json";
 
@@ -53,6 +54,8 @@ function App() {
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
   const offset = `${30 * (page - 1)}`;
+
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     let mount = true;
@@ -146,7 +149,7 @@ function App() {
         <CenterLoading />
       ) : (
         <div className="h-full bg-blue-100">
-          <Navbar />
+          <Navbar t={t} i18n={i18n} />
           <div className="text-center py-12">
             <div className="container mx-auto">
               <Search
