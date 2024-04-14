@@ -108,10 +108,10 @@ function App() {
   }, [page, offset]);
 
   const displayablePokemonArray = pokemonData.filter((pokemon) => {
-    // Fister Pokemon by Keyword Search
+    // Filter Pokemon by Name and Type from Keyword Search and Selected Types
     return (
       pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
-      pokemon.types.some((type) => activeType.includes(type.type.name))
+      pokemon.types.some((aTypes) => activeType.includes(aTypes.type.name))
     );
   });
 
