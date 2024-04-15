@@ -7,7 +7,16 @@ const Card = React.forwardRef(({ pokemon, index }, ref) => {
   const meterHeight = pokemon.height / 10;
   const kgWeight = pokemon.weight / 10;
 
-  const [localisedName, setLocalisedName] = useState("");
+  const initialPokemonName = () => {
+    if (!pokemon || !pokemon.names) {
+      return "";
+    }
+    const initialEntry = pokemon.names.find(
+      (entry) => entry.language.name === i18n.language
+    );
+    return initialEntry ? initialEntry.name : pokemon.name;
+  };
+  const [localisedName, setLocalisedName] = useState(initialPokemonName());
   useEffect(() => {
     const fetchPokemonSpecies = async () => {
       try {
