@@ -11,7 +11,7 @@
   "type": "タイプ",
   "height": "たかさ",
   "weight": "おもさ",
-  "ability": "とくいわざ",
+  "ability": "とくせい",
   "types": {
     "bug": "むし",
     "dark": "やみ",

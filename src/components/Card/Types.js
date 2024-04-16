@@ -1,6 +1,8 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const Types = ({ types }) => {
+  const { t } = useTranslation();
   const typeColors = {
     bug: "bg-lime-500/80",
     dark: "bg-gray-800/80",
@@ -30,7 +32,7 @@ const Types = ({ types }) => {
             className={`typeName mx-1 capitalize ${typeClass} text-white py-0.5 px-1 rounded-md`}
             key={i}
           >
-            {type.type.name}
+            {t("types." + type.type.name)}
           </p>
         );
       })}
