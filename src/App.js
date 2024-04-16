@@ -48,7 +48,7 @@ function App() {
     "steel",
     "water",
   ];
-  const [centerLoading, setCenterLoading] = useState(true); // Center Loadig
+  const [centerLoading, setCenterLoading] = useState(true); // Center Loading
   const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
@@ -80,7 +80,7 @@ function App() {
       const getEachPokemonData = async (data) => {
         let _pokemonData = await Promise.all(
           data.map((pokemon) => {
-            console.log(pokemon);
+            // console.log(pokemon);
             let pokemonRecord = getPokemon(pokemon.url); // The result from calling API
             return pokemonRecord;
           })

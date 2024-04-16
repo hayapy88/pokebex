@@ -17,26 +17,44 @@ const Card = React.forwardRef(({ pokemon, index }, ref) => {
     return initialEntry ? initialEntry.name : pokemon.name;
   };
   const [localisedName, setLocalisedName] = useState(initialPokemonName());
+  const [localisedAbility, setLocalisedAbility] = useState("");
   useEffect(() => {
     const fetchPokemonSpecies = async () => {
       try {
         const response = await fetch(pokemon.species.url);
         const pokemonSpecies = await response.json();
-        console.log("pokemonSpecies");
-        console.log(pokemonSpecies);
+        // console.log("pokemonSpecies", pokemonSpecies);
         const nameEntry = pokemonSpecies.names.find(
           (entry) => entry.language.name === i18n.language
         );
         if (nameEntry) {
           setLocalisedName(nameEntry.name);
-          console.log("nameEntry.name:" + nameEntry.name);
+          // console.log("nameEntry.name:" + nameEntry.name);
         }
       } catch (error) {
         console.log("Failed to fetch pokemon species:", error);
       }
     };
     fetchPokemonSpecies();
-  }, [pokemon.species.url, i18n.language]);
+
+    const fetchPokemonAbility = async () => {
+      try {
+        const response = await fetch(pokemon.abilities[0].ability.url);
+        // console.log(response);
+        const pokemonAbility = await response.json();
+        // console.log(pokemonAbility);
+        const abilityEntry = pokemonAbility.names.find(
+          (entry) => entry.language.name === i18n.language
+        );
+        if (abilityEntry) {
+          setLocalisedAbility(abilityEntry.name);
+        }
+      } catch (error) {
+        console.log("Failed to fetch pokemon ability:", error);
+      }
+    };
+    fetchPokemonAbility();
+  }, [pokemon.species.url, pokemon.abilities, i18n.language]);
 
   return (
     <div
@@ -74,7 +92,7 @@ const Card = React.forwardRef(({ pokemon, index }, ref) => {
         </div>
         <div className="cardData">
           <p className="font-bold capitalize">
-            {t("ability")}: {pokemon.abilities[0].ability.name}
+            {t("ability")}: {localisedAbility}
           </p>
         </div>
       </div>
