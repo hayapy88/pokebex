@@ -176,7 +176,7 @@ function App() {
                   );
                 })}
               </div>
-              {loading && offset <= 1025 && <p>Loading...</p>}
+              {loading && offset <= 1025 && <p>{t("loading")}</p>}
               {displayablePokemonArray.length === 0 && (
                 <p>
                   {t("messages.noFound1")}
