@@ -99,40 +99,77 @@ function App() {
 
         const putPokemonDataForEachLang = async (pokemonList) => {
           for (const pokemon of pokemonList) {
-            const pokemonSpecies = pokemon.species;
-            const speciesResponse = await fetch(pokemonSpecies.url);
+            const speciesResponse = await fetch(pokemon.species.url);
             const speciesData = await speciesResponse.json();
             console.log("speciesData", speciesData);
-            // Push Name
+
+            // Fetch Name
             const nameEN = speciesData.names.find(
               (entry) => entry.language.name === "en"
             );
             const nameJA = speciesData.names.find(
               (entry) => entry.language.name === "ja"
             );
+
+            // Fetch Types
+            const typesEnArray = [];
+            const typesJaArray = [];
+            for (const type of pokemon.types) {
+              const typesResponse = await fetch(type.type.url);
+              const typesData = await typesResponse.json();
+              console.log("typesData", typesData);
+
+              const typeEnEntry = typesData.names.find(
+                (entry) => entry.language.name === "en"
+              );
+              const typeJaEntry = typesData.names.find(
+                (entry) => entry.language.name === "ja"
+              );
+              typesEnArray.push(typeEnEntry.name);
+              typesJaArray.push(typeJaEntry.name);
+            }
+            console.log("pokemon.species", pokemon.species);
+
+            // Fetch Genus
+            const genusEnEntry = await speciesData.genera.find(
+              (entry) => entry.language.name === "en"
+            );
+            const genusJaEntry = await speciesData.genera.find(
+              (entry) => entry.language.name === "ja"
+            );
+            const genusEn = genusEnEntry.genus;
+            const genusJa = genusJaEntry.genus;
+
+            // Fetch No - no: pokemon.id
+            // Fetch Height - height: pokemon.height
+            // Fetch Weight - weight: pokemon.weight
+
+            // Push data
             if (nameEN) {
-              _pokemonData2.en.push({ name: nameEN.name });
+              _pokemonData2.en.push({
+                name: nameEN.name,
+                no: pokemon.id,
+                types: typesEnArray,
+                genes: genusEn,
+                height: pokemon.height,
+                weight: pokemon.weight,
+              });
               console.log(_pokemonData2);
             }
             if (nameJA) {
-              _pokemonData2.ja.push({ name: nameJA.name });
+              _pokemonData2.ja.push({
+                name: nameJA.name,
+                no: pokemon.id,
+                types: typesJaArray,
+                genes: genusJa,
+                height: pokemon.height,
+                weight: pokemon.weight,
+              });
               console.log(_pokemonData2);
             }
           }
         };
         putPokemonDataForEachLang(_rawPokemonData);
-
-        // Push Number
-
-        // Push Types
-
-        // Push Genus
-
-        // Push Height
-
-        // Push Weight
-
-        // Push Abilities
 
         // let _pokemonData = await Promise.all(
         //   data.map((pokemon) => {
