@@ -65,6 +65,7 @@ function App() {
     }
 
     setLoading(true);
+
     const fetchPokemonData = async () => {
       // Update Pokemon URL
 
@@ -72,33 +73,76 @@ function App() {
 
       // Get Pokemon name and URL from limited fetchPokemonURL.
       // eg) [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }, {}, {}, ...]
-      let res = await getPokemon(fetchPokemonURL);
-      console.log("res");
-      console.log(res);
+      let response = await getPokemon(fetchPokemonURL);
+      console.log("response");
+      console.log(response);
 
-      // Get each Pokemon data
-      const getEachPokemonData = async (data) => {
-        let _pokemonData = await Promise.all(
-          data.map((pokemon) => {
-            // console.log(pokemon);
-            let pokemonRecord = getPokemon(pokemon.url); // The result from calling API
-            return pokemonRecord;
+      const receivedPokemons = response.results;
+
+      console.log("receivedPokemons", receivedPokemons);
+
+      // Get each Pokemon data and push to pokemonData
+      const _pokemonData2 = {
+        en: [],
+        ja: [],
+      };
+
+      const getEachPokemonData = async (receivedPokemons) => {
+        let _rawPokemonData = await Promise.all(
+          receivedPokemons.map((pokemon) => {
+            // Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
+            let aRawPokemonData = getPokemon(pokemon.url); // pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
+            return aRawPokemonData;
           })
         );
+        console.log("_rawPokemonData", _rawPokemonData);
+
+        const putPokemonDataForEachLang = async (allPokemonData) => {
+          for (const pokemonData of allPokemonData) {
+            const pokemonSpecies = pokemonData.species;
+            const speciesResponse = await fetch(pokemonSpecies.url);
+            const speciesData = await speciesResponse.json();
+            console.log("speciesData", speciesData);
+          }
+        };
+        putPokemonDataForEachLang(_rawPokemonData);
+
+        // Push Name
+
+        // Push Number
+
+        // Push Types
+
+        // Push Genus
+
+        // Push Height
+
+        // Push Weight
+
+        // Push Abilities
+
+        // let _pokemonData = await Promise.all(
+        //   data.map((pokemon) => {
+        //     // console.log(pokemon);
+        //     let pokemonRecord = getPokemon(pokemon.url); // The result from calling API
+        //     return pokemonRecord;
+        //   })
+        // );
         if (mount) {
           setPokemonData((prevPokemonData) => [
             ...prevPokemonData,
-            ..._pokemonData,
+            ..._rawPokemonData,
           ]);
           setLoading(false);
         }
 
-        console.log("_pokemonData");
-        console.log(_pokemonData);
+        console.log("_rawPokemonData");
+        console.log(_rawPokemonData);
       };
 
-      getEachPokemonData(res.results);
-      console.log(res.results);
+      getEachPokemonData(response.results);
+      console.log(response.results);
+
       setCenterLoading(false);
     };
     fetchPokemonData();
