@@ -122,10 +122,10 @@ function App() {
   const handleAllTypes = () => {
     // Pokemon Types All ON / All Off
     if (activeType.length >= 1) {
-      console.log("All Off");
+      console.log("All OFF");
       setActiveType([]);
     } else {
-      console.log("All On");
+      console.log("All ON");
       setActiveType(pokemonTypes);
     }
   };
