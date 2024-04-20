@@ -97,17 +97,30 @@ function App() {
         );
         console.log("_rawPokemonData", _rawPokemonData);
 
-        const putPokemonDataForEachLang = async (allPokemonData) => {
-          for (const pokemonData of allPokemonData) {
-            const pokemonSpecies = pokemonData.species;
+        const putPokemonDataForEachLang = async (pokemonList) => {
+          for (const pokemon of pokemonList) {
+            const pokemonSpecies = pokemon.species;
             const speciesResponse = await fetch(pokemonSpecies.url);
             const speciesData = await speciesResponse.json();
             console.log("speciesData", speciesData);
+            // Push Name
+            const nameEN = speciesData.names.find(
+              (entry) => entry.language.name === "en"
+            );
+            const nameJA = speciesData.names.find(
+              (entry) => entry.language.name === "ja"
+            );
+            if (nameEN) {
+              _pokemonData2.en.push({ name: nameEN.name });
+              console.log(_pokemonData2);
+            }
+            if (nameJA) {
+              _pokemonData2.ja.push({ name: nameJA.name });
+              console.log(_pokemonData2);
+            }
           }
         };
         putPokemonDataForEachLang(_rawPokemonData);
-
-        // Push Name
 
         // Push Number
 
