@@ -53,6 +53,7 @@ function App() {
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
+  // Fetch pokemon 30 by 30
   const offset = `${30 * (page - 1)}`;
 
   const { t, i18n } = useTranslation();
@@ -60,6 +61,7 @@ function App() {
   useEffect(() => {
     let mount = true;
 
+    // Max number of Fetching Pokemon
     if (offset > 1025) {
       return;
     }
