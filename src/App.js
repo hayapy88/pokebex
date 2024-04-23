@@ -10,8 +10,10 @@ import { useTranslation } from "react-i18next";
 // import ja from ".locales/ja.json";
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [loading, setLoading] = useState(false);
+  const [pageLang, setPageLang] = useState(i18n.language);
   const observer = useRef();
   const lastItemRef = useCallback(
     (node) => {
@@ -27,6 +29,8 @@ function App() {
     },
     [loading]
   );
+
+  console.log("pageLang", pageLang);
 
   const pokemonTypes = [
     "bug",
@@ -50,13 +54,12 @@ function App() {
   ];
   const [centerLoading, setCenterLoading] = useState(true); // Center Loading
   const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
+  const [pokemonData2, setPokemonData2] = useState({}); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
   // Fetch pokemon 30 by 30
   const offset = `${30 * (page - 1)}`;
-
-  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     let mount = true;
@@ -156,7 +159,7 @@ function App() {
                 height: pokemon.height,
                 weight: pokemon.weight,
               });
-              console.log(_pokemonData2);
+              console.log("_pokemonData2.en", _pokemonData2.en);
             }
             if (nameJA) {
               _pokemonData2.ja.push({
@@ -167,7 +170,7 @@ function App() {
                 height: pokemon.height,
                 weight: pokemon.weight,
               });
-              console.log(_pokemonData2);
+              console.log("_pokemonData2.ja", _pokemonData2.ja);
             }
           }
         };
@@ -185,6 +188,8 @@ function App() {
             ...prevPokemonData,
             ..._rawPokemonData,
           ]);
+          setPokemonData2(pokemonData2);
+          console.log("pokemonData2", setPokemonData2(pokemonData2));
           setLoading(false);
         }
 
@@ -201,7 +206,7 @@ function App() {
     return () => {
       mount = false;
     };
-  }, [page, offset]);
+  }, [page, offset, pokemonData2]);
 
   const displayablePokemonArray = pokemonData.filter((pokemon) => {
     // Filter Pokemon by Name and Type from Keyword Search and Selected Types
