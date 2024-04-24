@@ -14,24 +14,6 @@ function App() {
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [loading, setLoading] = useState(false);
   const [pageLang, setPageLang] = useState(i18n.language);
-  const observer = useRef();
-  const lastItemRef = useCallback(
-    (node) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((prev) => prev + 1);
-          setLoading(false);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [loading]
-  );
-
-  console.log("pageLang", pageLang);
-
   const pokemonTypes = [
     "bug",
     "dark",
@@ -57,6 +39,23 @@ function App() {
   const [pokemonData2, setPokemonData2] = useState({}); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
+  const observer = useRef();
+  const lastItemRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((prev) => prev + 1);
+          setLoading(false);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading]
+  );
+
+  console.log("pageLang", pageLang);
 
   // Fetch pokemon 30 by 30
   const offset = `${30 * (page - 1)}`;
