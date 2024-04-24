@@ -14,6 +14,10 @@ function App() {
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [loading, setLoading] = useState(false);
   const [pageLang, setPageLang] = useState(i18n.language);
+  const [centerLoading, setCenterLoading] = useState(true); // Center Loading
+  const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
+  const [pokemonData2, setPokemonData2] = useState({}); // Pokemon Data for displaying
+  const [query, setQuery] = useState(""); // Query for search Pokemon
   const pokemonTypes = [
     "bug",
     "dark",
@@ -34,11 +38,8 @@ function App() {
     "steel",
     "water",
   ];
-  const [centerLoading, setCenterLoading] = useState(true); // Center Loading
-  const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
-  const [pokemonData2, setPokemonData2] = useState({}); // Pokemon Data for displaying
-  const [query, setQuery] = useState(""); // Query for search Pokemon
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
+
   const observer = useRef();
   const lastItemRef = useCallback(
     (node) => {
@@ -54,7 +55,6 @@ function App() {
     },
     [loading]
   );
-
   console.log("pageLang", pageLang);
 
   // Fetch pokemon 30 by 30
