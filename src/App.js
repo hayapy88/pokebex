@@ -40,6 +40,10 @@ function App() {
   ];
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
 
+  useEffect(() => {
+    setPageLang(i18n.language);
+  }, [i18n.language]);
+
   const observer = useRef();
   const lastItemRef = useCallback(
     (node) => {
