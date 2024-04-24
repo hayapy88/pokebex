@@ -16,7 +16,7 @@ function App() {
   const [pageLang, setPageLang] = useState(i18n.language);
   const [centerLoading, setCenterLoading] = useState(true); // Center Loading
   const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
-  const [pokemonData2, setPokemonData2] = useState({}); // Pokemon Data for displaying
+  const [pokemonData2, setPokemonData2] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const pokemonTypes = [
     "bug",
@@ -72,7 +72,6 @@ function App() {
 
     const fetchPokemonData = async () => {
       // Update Pokemon URL
-
       const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`;
 
       // Get Pokemon name and URL from limited fetchPokemonURL.
@@ -82,7 +81,6 @@ function App() {
       console.log(response);
 
       const receivedPokemons = response.results;
-
       console.log("receivedPokemons", receivedPokemons);
 
       // Get each Pokemon data and push to pokemonData
@@ -90,110 +88,100 @@ function App() {
         en: [],
         ja: [],
       };
-
       const getEachPokemonData = async (receivedPokemons) => {
         let _rawPokemonData = await Promise.all(
           receivedPokemons.map((pokemon) => {
             // Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
-            let aRawPokemonData = getPokemon(pokemon.url); // pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
-            return aRawPokemonData;
+            return getPokemon(pokemon.url); // pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
           })
         );
         console.log("_rawPokemonData", _rawPokemonData);
+        await putPokemonDataForEachLang(_rawPokemonData);
+        console.log("_pokemonData2", _pokemonData2);
+      };
 
-        const putPokemonDataForEachLang = async (pokemonList) => {
-          for (const pokemon of pokemonList) {
-            const speciesResponse = await fetch(pokemon.species.url);
-            const speciesData = await speciesResponse.json();
-            console.log("speciesData", speciesData);
+      const putPokemonDataForEachLang = async (_rawPokemonData) => {
+        for (const pokemon of _rawPokemonData) {
+          const speciesResponse = await fetch(pokemon.species.url);
+          const speciesData = await speciesResponse.json();
+          // console.log("speciesData", speciesData);
 
-            // Fetch Name
-            const nameEN = speciesData.names.find(
+          // Fetch Name
+          const nameEN = speciesData.names.find(
+            (entry) => entry.language.name === "en"
+          );
+          const nameJA = speciesData.names.find(
+            (entry) => entry.language.name === "ja"
+          );
+
+          // Fetch Types
+          const typesEnArray = [];
+          const typesJaArray = [];
+          for (const type of pokemon.types) {
+            const typesResponse = await fetch(type.type.url);
+            const typesData = await typesResponse.json();
+            // console.log("typesData", typesData);
+
+            const typeEnEntry = typesData.names.find(
               (entry) => entry.language.name === "en"
             );
-            const nameJA = speciesData.names.find(
+            const typeJaEntry = typesData.names.find(
               (entry) => entry.language.name === "ja"
             );
-
-            // Fetch Types
-            const typesEnArray = [];
-            const typesJaArray = [];
-            for (const type of pokemon.types) {
-              const typesResponse = await fetch(type.type.url);
-              const typesData = await typesResponse.json();
-              console.log("typesData", typesData);
-
-              const typeEnEntry = typesData.names.find(
-                (entry) => entry.language.name === "en"
-              );
-              const typeJaEntry = typesData.names.find(
-                (entry) => entry.language.name === "ja"
-              );
-              typesEnArray.push(typeEnEntry.name);
-              typesJaArray.push(typeJaEntry.name);
-            }
-            console.log("pokemon.species", pokemon.species);
-
-            // Fetch Genus
-            const genusEnEntry = await speciesData.genera.find(
-              (entry) => entry.language.name === "en"
-            );
-            const genusJaEntry = await speciesData.genera.find(
-              (entry) => entry.language.name === "ja"
-            );
-            const genusEn = genusEnEntry.genus;
-            const genusJa = genusJaEntry.genus;
-
-            // Fetch No - no: pokemon.id
-            // Fetch Height - height: pokemon.height
-            // Fetch Weight - weight: pokemon.weight
-
-            // Push data
-            if (nameEN) {
-              _pokemonData2.en.push({
-                name: nameEN.name,
-                no: pokemon.id,
-                types: typesEnArray,
-                genes: genusEn,
-                height: pokemon.height,
-                weight: pokemon.weight,
-              });
-              console.log("_pokemonData2.en", _pokemonData2.en);
-            }
-            if (nameJA) {
-              _pokemonData2.ja.push({
-                name: nameJA.name,
-                no: pokemon.id,
-                types: typesJaArray,
-                genes: genusJa,
-                height: pokemon.height,
-                weight: pokemon.weight,
-              });
-              console.log("_pokemonData2.ja", _pokemonData2.ja);
-            }
+            typesEnArray.push(typeEnEntry.name);
+            typesJaArray.push(typeJaEntry.name);
           }
-        };
-        putPokemonDataForEachLang(_rawPokemonData);
+          // console.log("pokemon.species", pokemon.species);
 
-        // let _pokemonData = await Promise.all(
-        //   data.map((pokemon) => {
-        //     // console.log(pokemon);
-        //     let pokemonRecord = getPokemon(pokemon.url); // The result from calling API
-        //     return pokemonRecord;
-        //   })
-        // );
+          // Fetch Genus
+          const genusEnEntry = await speciesData.genera.find(
+            (entry) => entry.language.name === "en"
+          );
+          const genusJaEntry = await speciesData.genera.find(
+            (entry) => entry.language.name === "ja"
+          );
+          const genusEn = genusEnEntry.genus;
+          const genusJa = genusJaEntry.genus;
+
+          // Fetch No - no: pokemon.id
+          // Fetch Height - height: pokemon.height
+          // Fetch Weight - weight: pokemon.weight
+
+          // Push data
+          if (nameEN) {
+            _pokemonData2.en.push({
+              name: nameEN.name,
+              no: pokemon.id,
+              types: typesEnArray,
+              genes: genusEn,
+              height: pokemon.height,
+              weight: pokemon.weight,
+            });
+            // console.log("_pokemonData2.en", _pokemonData2.en);
+          }
+          if (nameJA) {
+            _pokemonData2.ja.push({
+              name: nameJA.name,
+              no: pokemon.id,
+              types: typesJaArray,
+              genes: genusJa,
+              height: pokemon.height,
+              weight: pokemon.weight,
+            });
+            // console.log("_pokemonData2.ja", _pokemonData2.ja);
+          }
+        }
         if (mount) {
           setPokemonData((prevPokemonData) => [
             ...prevPokemonData,
             ..._rawPokemonData,
           ]);
-          setPokemonData2(pokemonData2);
-          console.log("pokemonData2", setPokemonData2(pokemonData2));
+          setPokemonData2((prevPokemonData2) => ({
+            en: [...prevPokemonData2.en, ..._pokemonData2.en],
+            ja: [...prevPokemonData2.ja, ..._pokemonData2.ja],
+          }));
           setLoading(false);
         }
-
-        console.log("_rawPokemonData");
-        console.log(_rawPokemonData);
       };
 
       getEachPokemonData(response.results);
@@ -205,7 +193,11 @@ function App() {
     return () => {
       mount = false;
     };
-  }, [page, offset, pokemonData2]);
+  }, [page, offset]);
+
+  useEffect(() => {
+    console.log("Updated pokemonData2", pokemonData2);
+  }, [pokemonData2]);
 
   const displayablePokemonArray = pokemonData.filter((pokemon) => {
     // Filter Pokemon by Name and Type from Keyword Search and Selected Types
