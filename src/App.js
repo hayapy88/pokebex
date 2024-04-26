@@ -203,13 +203,23 @@ function App() {
     console.log("Updated pokemonData2", pokemonData2);
   }, [pokemonData2]);
 
-  const displayablePokemonArray = pokemonData.filter((pokemon) => {
+  const displayablePokemonArray = (query, activeType) => {
     // Filter Pokemon by Name and Type from Keyword Search and Selected Types
-    return (
-      pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
-      pokemon.types.some((aTypes) => activeType.includes(aTypes.type.name))
-    );
-  });
+    if (i18n.language === "en") {
+      console.log("en in displayablePokemonArray");
+      return pokemonData2.en.filter((pokemon) => {
+        console.log(pokemon);
+        return (
+          pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+          pokemon.types.some((aTypes) =>
+            activeType.includes(aTypes.toLowerCase())
+          )
+        );
+      });
+    } else if (i18n.language === "ja") {
+      console.log("ja in displayablePokemonArray");
+    }
+  };
 
   const handleInputChange = (newQuery) => {
     // Get Key word for Search from Search box
@@ -257,7 +267,7 @@ function App() {
                 t={t}
               />
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 mt-8 sm:mt-14 pt-6 mb-4">
-                {displayablePokemonArray.map((pokemon, index) => {
+                {/* {displayablePokemonArray.map((pokemon, index) => {
                   return (
                     <Card
                       key={index}
@@ -270,7 +280,7 @@ function App() {
                       t={t}
                     />
                   );
-                })}
+                })} */}
               </div>
               {loading && offset <= 1025 && <p>{t("loading")}</p>}
               {displayablePokemonArray.length === 0 && (
