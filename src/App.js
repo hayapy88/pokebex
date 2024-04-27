@@ -6,8 +6,6 @@ import Navbar from "./components/Navbar/Navbar.js";
 import CenterLoading from "./components/Loading/CenterLoading.js";
 import Search from "./components/Search/Search.js";
 import { useTranslation } from "react-i18next";
-// import en from ".locales/en.json";
-// import ja from ".locales/ja.json";
 
 function App() {
   const { t, i18n } = useTranslation();
