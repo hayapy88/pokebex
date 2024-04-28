@@ -201,23 +201,43 @@ function App() {
     console.log("Updated pokemonData2", pokemonData2);
   }, [pokemonData2]);
 
-  const displayablePokemonArray = (query, activeType) => {
+  const displayablePokemonArray = (query = "", activeType = []) => {
+    let filteredPokemons;
+
     // Filter Pokemon by Name and Type from Keyword Search and Selected Types
     if (i18n.language === "en") {
       console.log("en in displayablePokemonArray");
-      return pokemonData2.en.filter((pokemon) => {
-        console.log(pokemon);
-        return (
-          pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
-          pokemon.types.some((aTypes) =>
-            activeType.includes(aTypes.toLowerCase())
-          )
-        );
-      });
+      if (pokemonData2.en) {
+        filteredPokemons = pokemonData2.en.filter((pokemon) => {
+          console.log("pokemon", pokemon);
+          return (
+            pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+            pokemon.types.some((aTypes) =>
+              activeType.includes(aTypes.toLowerCase())
+            )
+          );
+        });
+      }
     } else if (i18n.language === "ja") {
       console.log("ja in displayablePokemonArray");
+      if (pokemonData2.ja) {
+        filteredPokemons = pokemonData2.ja.filter((pokemon) => {
+          console.log("pokemon", pokemon);
+          return (
+            pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+            pokemon.types.some((aTypes) =>
+              activeType.includes(aTypes.toLowerCase())
+            )
+          );
+        });
+      }
     }
+
+    console.log(filteredPokemons);
+    return filteredPokemons;
   };
+
+  displayablePokemonArray();
 
   const handleInputChange = (newQuery) => {
     // Get Key word for Search from Search box
