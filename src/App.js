@@ -36,6 +36,7 @@ function App() {
     "steel",
     "water",
   ];
+
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
   const [filteredPokemons, setFilteredPokemons] = useState({ en: [], ja: [] });
 
