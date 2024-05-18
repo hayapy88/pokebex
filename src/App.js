@@ -13,7 +13,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [pageLang, setPageLang] = useState(i18n.language);
   const [centerLoading, setCenterLoading] = useState(true); // Center Loading
-  const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
+  // const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
   const [pokemonData2, setPokemonData2] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const pokemonTypes = [
@@ -36,7 +36,6 @@ function App() {
     "steel",
     "water",
   ];
-
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
   const [filteredPokemons, setFilteredPokemons] = useState({ en: [], ja: [] });
 
@@ -183,10 +182,10 @@ function App() {
           }
         }
         if (mount) {
-          setPokemonData((prevPokemonData) => [
-            ...prevPokemonData,
-            ..._rawPokemonData,
-          ]);
+          // setPokemonData((prevPokemonData) => [
+          //   ...prevPokemonData,
+          //   ..._rawPokemonData,
+          // ]);
           setPokemonData2((prevPokemonData2) => ({
             en: [...prevPokemonData2.en, ..._pokemonData2.en],
             ja: [...prevPokemonData2.ja, ..._pokemonData2.ja],
@@ -210,59 +209,65 @@ function App() {
     console.log("Updated pokemonData2", pokemonData2);
   }, [pokemonData2]);
 
-  const filterPokemons = (query, activeType) => {
-    let filteredPokemons = {
-      en: [],
-      ja: [],
-    };
-    // Filter Pokemon by Name and Type from Keyword Search and Selected Types
-    if (i18n.language === "en" && pokemonData2.en) {
-      console.log("en in filterPokemons");
-      if (pokemonData2.en) {
-        filteredPokemons.en = pokemonData2.en.filter((pokemon) => {
-          console.log("Pokemon Types:", pokemon.types);
-          console.log("pokemon", pokemon);
-          return (
-            pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
-            pokemon.types.some((aTypes) =>
-              activeType.includes(aTypes.toLowerCase())
-            )
-          );
-        });
+  const filterPokemons = useCallback(
+    (query, activeType) => {
+      let filteredPokemons = {
+        en: [],
+        ja: [],
+      };
+      // Filter Pokemon by Name and Type from Keyword Search and Selected Types
+      if (i18n.language === "en" && pokemonData2.en) {
+        console.log("en in filterPokemons");
+        if (pokemonData2.en) {
+          filteredPokemons.en = pokemonData2.en.filter((pokemon) => {
+            console.log("Pokemon Types:", pokemon.types);
+            console.log("pokemon", pokemon);
+            return (
+              pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+              pokemon.types.some((aTypes) =>
+                activeType.includes(aTypes.toLowerCase())
+              )
+            );
+          });
+        }
+      } else if (i18n.language === "ja" && pokemonData2.ja) {
+        console.log("ja in filterPokemons");
+        if (pokemonData2.ja) {
+          filteredPokemons.ja = pokemonData2.ja.filter((pokemon) => {
+            console.log("pokemon", pokemon);
+            return (
+              pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+              pokemon.types.some((aTypes) =>
+                activeType.includes(aTypes.toLowerCase())
+              )
+            );
+          });
+        }
       }
-    } else if (i18n.language === "ja" && pokemonData2.ja) {
-      console.log("ja in filterPokemons");
-      if (pokemonData2.ja) {
-        filteredPokemons.ja = pokemonData2.ja.filter((pokemon) => {
-          console.log("pokemon", pokemon);
-          return (
-            pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
-            pokemon.types.some((aTypes) =>
-              activeType.includes(aTypes.toLowerCase())
-            )
-          );
-        });
-      }
-    }
 
-    console.log("filteredPokemons", filteredPokemons);
-    return filteredPokemons;
-  };
+      console.log("filteredPokemons", filteredPokemons);
+      return filteredPokemons;
+    },
+    [pokemonData2, i18n.language]
+  );
 
   useEffect(() => {
     console.log("Current query:", query);
     console.log("Active types:", activeType);
   }, [query, activeType]);
 
-  const fetchFilteredPokemons = (query, activeType) => {
-    console.log("pokemonData2 before filter:", pokemonData2);
-    const result = filterPokemons(query, activeType);
-    setFilteredPokemons(result);
-  };
+  const fetchFilteredPokemons = useCallback(
+    (query, activeType) => {
+      console.log("pokemonData2 before filter:", pokemonData2);
+      const result = filterPokemons(query, activeType);
+      setFilteredPokemons(result);
+    },
+    [filterPokemons, pokemonData2]
+  );
 
   useEffect(() => {
     fetchFilteredPokemons(query, activeType);
-  }, [query, activeType, pageLang]);
+  }, [query, activeType, pageLang, fetchFilteredPokemons]);
 
   const handleInputChange = (newQuery) => {
     // Get Key word for Search from Search box

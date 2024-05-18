@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Types from "./Types";
 
-const Card = React.forwardRef(({ pokemon, index }, ref) => {
+const Card = React.forwardRef(({ pokemon }, ref) => {
+  // `index`は使用しないため削除
   const { t, i18n } = useTranslation();
   const meterHeight = pokemon.height / 10;
   const kgWeight = pokemon.weight / 10;
@@ -18,31 +19,40 @@ const Card = React.forwardRef(({ pokemon, index }, ref) => {
   };
   const [localisedName, setLocalisedName] = useState(initialPokemonName());
   const [localisedAbility, setLocalisedAbility] = useState("");
+
   useEffect(() => {
     const fetchPokemonSpecies = async () => {
+      if (!pokemon || !pokemon.species || !pokemon.species.url) {
+        console.log("Pokemon species data is missing");
+        return;
+      }
       try {
         const response = await fetch(pokemon.species.url);
         const pokemonSpecies = await response.json();
-        // console.log("pokemonSpecies", pokemonSpecies);
         const nameEntry = pokemonSpecies.names.find(
           (entry) => entry.language.name === i18n.language
         );
         if (nameEntry) {
           setLocalisedName(nameEntry.name);
-          // console.log("nameEntry.name:" + nameEntry.name);
         }
       } catch (error) {
         console.log("Failed to fetch pokemon species:", error);
       }
     };
-    fetchPokemonSpecies();
 
     const fetchPokemonAbility = async () => {
+      if (
+        !pokemon ||
+        !pokemon.abilities ||
+        pokemon.abilities.length === 0 ||
+        !pokemon.abilities[0].ability.url
+      ) {
+        console.log("Pokemon abilities data is missing");
+        return;
+      }
       try {
         const response = await fetch(pokemon.abilities[0].ability.url);
-        // console.log(response);
         const pokemonAbility = await response.json();
-        // console.log(pokemonAbility);
         const abilityEntry = pokemonAbility.names.find(
           (entry) => entry.language.name === i18n.language
         );
@@ -53,21 +63,26 @@ const Card = React.forwardRef(({ pokemon, index }, ref) => {
         console.log("Failed to fetch pokemon ability:", error);
       }
     };
+
+    fetchPokemonSpecies();
     fetchPokemonAbility();
-  }, [pokemon.species.url, pokemon.abilities, i18n.language]);
+  }, [pokemon, i18n.language]);
 
   return (
     <div
       className="card mx-3 sm:mx-2 p-8 bg-blue-50 border rounded-lg shadow-lg"
-      key={index}
-      ref={ref}
+      ref={ref} // `key`は親コンポーネントで使用するため削除
     >
       <div className="cardImg">
-        <img
-          src={pokemon.sprites.front_default}
-          alt={localisedName}
-          className="mx-auto"
-        />
+        {pokemon.sprites && pokemon.sprites.front_default ? (
+          <img
+            src={pokemon.sprites.front_default}
+            alt={localisedName}
+            className="mx-auto"
+          />
+        ) : (
+          <p>{t("messages.imageNotAvailable")}</p> // 画像がない場合の代替テキスト
+        )}
       </div>
       <h3 className="cardName mb-3 text-2xl font-bold capitalize">
         {localisedName}

@@ -23,16 +23,24 @@ const Types = ({ types }) => {
     steel: "bg-teal-700/70",
     water: "bg-blue-500/90",
   };
+
+  if (!types || types.length === 0) {
+    return <p>{t("messages.noTypes")}</p>; // タイプがない場合の代替メッセージ
+  }
+
   return (
     <>
       {types.map((type, i) => {
+        if (!type || !type.type || !type.type.name) {
+          return null; // typeまたはtype.type.nameがundefinedの場合は無視
+        }
         const typeClass = typeColors[type.type.name] || "bg-gray-200";
         return (
           <p
             className={`typeName mx-1 capitalize ${typeClass} text-white py-0.5 px-1 rounded-md`}
             key={i}
           >
-            {t("types." + type.type.name)}
+            {t("types." + type.type.name, type.type.name)}
           </p>
         );
       })}
