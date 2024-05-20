@@ -34,6 +34,7 @@
   },
   "messages": {
     "noFound1": "No Pokémon were found under these conditions.",
-    "noFound2": "Try adjusting the Pokémon name or types to see different results."
+    "noFound2": "Try adjusting the Pokémon name or types to see different results.",
+    "imageNotAvailable": "No Image"
   }
 }
