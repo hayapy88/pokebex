@@ -23,16 +23,45 @@ const Types = ({ types }) => {
     steel: "bg-teal-700/70",
     water: "bg-blue-500/90",
   };
+  const typeTranslations = {
+    むし: "bug",
+    やみ: "dark",
+    ドラゴン: "dragon",
+    でんき: "electric",
+    フェアリー: "fairy",
+    かくとう: "fighting",
+    ほのお: "fire",
+    ひこう: "flying",
+    ゴースト: "ghost",
+    くさ: "grass",
+    じめん: "ground",
+    こおり: "ice",
+    ノーマル: "normal",
+    どく: "poison",
+    エスパー: "psychic",
+    いわ: "rock",
+    はがね: "steel",
+    みず: "water",
+  };
+
+  if (!types || types.length === 0) {
+    return <p>{t("messages.noTypes")}</p>; // タイプがない場合の代替メッセージ
+  }
+
   return (
     <>
       {types.map((type, i) => {
-        const typeClass = typeColors[type.type.name] || "bg-gray-200";
+        if (!type) {
+          return null; // typeがundefinedの場合は無視
+        }
+        const englishType = typeTranslations[type] || type.toLowerCase();
+        const typeClass = typeColors[englishType] || "bg-gray-400";
         return (
           <p
             className={`typeName mx-1 capitalize ${typeClass} text-white py-0.5 px-1 rounded-md`}
             key={i}
           >
-            {t("types." + type.type.name)}
+            {type}
           </p>
         );
       })}

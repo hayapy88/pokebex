@@ -11,7 +11,7 @@
   "type": "Type",
   "height": "Height",
   "weight": "Weight",
-  "ability": "Ability",
+  "classification": "Classification",
   "types": {
     "bug": "bug",
     "dark": "dark",
@@ -34,6 +34,8 @@
   },
   "messages": {
     "noFound1": "No Pokémon were found under these conditions.",
-    "noFound2": "Try adjusting the Pokémon name or types to see different results."
+    "noFound2": "Try adjusting the Pokémon name or types to see different results.",
+    "imageNotAvailable": "No image data",
+    "noTypes": "No type data"
   }
 }
