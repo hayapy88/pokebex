@@ -11,7 +11,7 @@
   "type": "タイプ",
   "height": "たかさ",
   "weight": "おもさ",
-  "ability": "とくせい",
+  "classification": "ぶんるい",
   "types": {
     "bug": "むし",
     "dark": "やみ",
@@ -35,6 +35,7 @@
   "messages": {
     "noFound1": "検索条件でポケモンが見つかりませんでした。",
     "noFound2": "検索する名前やタイプを調整してみてください。",
-    "imageNotAvailable": "画像がありません"
+    "imageNotAvailable": "画像データがありません",
+    "noTypes": "タイプ情報がありません"
   }
 }

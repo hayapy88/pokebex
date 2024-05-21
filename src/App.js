@@ -82,8 +82,8 @@ function App() {
       let response = await getPokemon(fetchPokemonURL);
       console.log("API response:", response);
 
-      const receivedPokemons = response.results;
-      console.log("receivedPokemons", receivedPokemons);
+      const receivedPokemonsArray = response.results;
+      console.log("receivedPokemonsArray", receivedPokemonsArray);
 
       // Get each Pokemon data and push to pokemonData
       const _pokemonData2 = {
@@ -93,7 +93,7 @@ function App() {
       const getEachPokemonData = async (receivedPokemons) => {
         let _rawPokemonData = await Promise.all(
           receivedPokemons.map((pokemon) => {
-            console.log("receivedPokemons", receivedPokemons);
+            // console.log("receivedPokemons", receivedPokemons);
 
             // Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
             console.log("Try getEachPokemonData");
@@ -106,10 +106,10 @@ function App() {
         console.log("_pokemonData2", _pokemonData2);
       };
 
-      const putPokemonDataForEachLang = async (_rawPokemonData) => {
+      const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
         console.log("Try putPokemonDataForEachLang");
-        console.log("_rawPokemonData", _rawPokemonData);
-        for (const pokemon of _rawPokemonData) {
+        console.log("receivedRawPokemonData", receivedRawPokemonData);
+        for (const pokemon of receivedRawPokemonData) {
           // URL OK
           const speciesResponse = await fetch(pokemon.species.url);
           const speciesData = await speciesResponse.json();
@@ -153,6 +153,9 @@ function App() {
           const genusEn = genusEnEntry.genus;
           const genusJa = genusJaEntry.genus;
 
+          // Fetch image
+          const pokemonImage = await pokemon.sprites.front_default;
+
           // Fetch No - no: pokemon.id
           // Fetch Height - height: pokemon.height
           // Fetch Weight - weight: pokemon.weight
@@ -166,6 +169,7 @@ function App() {
               genes: genusEn,
               height: pokemon.height,
               weight: pokemon.weight,
+              image: pokemonImage,
             });
             console.log("_pokemonData2.en", _pokemonData2.en);
           }
@@ -177,6 +181,7 @@ function App() {
               genes: genusJa,
               height: pokemon.height,
               weight: pokemon.weight,
+              image: pokemonImage,
             });
             console.log("_pokemonData2.ja", _pokemonData2.ja);
           }
@@ -194,8 +199,8 @@ function App() {
         }
       };
 
-      getEachPokemonData(response.results);
-      console.log(response.results);
+      getEachPokemonData(receivedPokemonsArray);
+      console.log(receivedPokemonsArray);
 
       setCenterLoading(false);
     };
@@ -207,48 +212,30 @@ function App() {
 
   useEffect(() => {
     console.log("Updated pokemonData2", pokemonData2);
+    setFilteredPokemons(pokemonData2);
   }, [pokemonData2]);
 
   const filterPokemons = useCallback(
     (query, activeType) => {
-      let filteredPokemons = {
-        en: [],
-        ja: [],
-      };
       // Filter Pokemon by Name and Type from Keyword Search and Selected Types
-      if (i18n.language === "en" && pokemonData2.en) {
+      if (pokemonData2.pageLang) {
         console.log("en in filterPokemons");
-        if (pokemonData2.en) {
-          filteredPokemons.en = pokemonData2.en.filter((pokemon) => {
-            console.log("Pokemon Types:", pokemon.types);
-            console.log("pokemon", pokemon);
-            return (
-              pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
-              pokemon.types.some((aTypes) =>
-                activeType.includes(aTypes.toLowerCase())
-              )
-            );
-          });
-        }
-      } else if (i18n.language === "ja" && pokemonData2.ja) {
-        console.log("ja in filterPokemons");
-        if (pokemonData2.ja) {
-          filteredPokemons.ja = pokemonData2.ja.filter((pokemon) => {
-            console.log("pokemon", pokemon);
-            return (
-              pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
-              pokemon.types.some((aTypes) =>
-                activeType.includes(aTypes.toLowerCase())
-              )
-            );
-          });
-        }
+        filteredPokemons.pageLang = pokemonData2.pageLang.filter((pokemon) => {
+          console.log("Pokemon Types:", pokemon.types);
+          console.log("pokemon", pokemon);
+          return (
+            pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+            pokemon.types.some((aTypes) =>
+              activeType.includes(aTypes.toLowerCase())
+            )
+          );
+        });
       }
 
       console.log("filteredPokemons", filteredPokemons);
       return filteredPokemons;
     },
-    [pokemonData2, i18n.language]
+    [pokemonData2.pageLang, filteredPokemons]
   );
 
   useEffect(() => {
@@ -258,6 +245,7 @@ function App() {
 
   const fetchFilteredPokemons = useCallback(
     (query, activeType) => {
+      console.log("fetchFilteredPokemons executed");
       console.log("pokemonData2 before filter:", pokemonData2);
       const result = filterPokemons(query, activeType);
       setFilteredPokemons(result);
@@ -265,13 +253,14 @@ function App() {
     [filterPokemons, pokemonData2]
   );
 
-  useEffect(() => {
-    fetchFilteredPokemons(query, activeType);
-  }, [query, activeType, pageLang, fetchFilteredPokemons]);
+  // useEffect(() => {
+  //   fetchFilteredPokemons(query, activeType);
+  // }, [query, activeType, pageLang, fetchFilteredPokemons]);
 
   const handleInputChange = (newQuery) => {
     // Get Key word for Search from Search box
     setQuery(newQuery);
+    fetchFilteredPokemons();
   };
   const handleAllTypes = () => {
     // Pokemon Types All ON / All Off
@@ -317,6 +306,7 @@ function App() {
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 mt-8 sm:mt-14 pt-6 mb-4">
                 {filteredPokemons[pageLang] &&
                   filteredPokemons[pageLang].map((pokemon, index) => {
+                    console.log("pokemon: " + index, pokemon);
                     return (
                       <Card
                         key={index}
