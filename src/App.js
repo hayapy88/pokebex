@@ -292,6 +292,10 @@ function App() {
     filterPokemons(query, activeType);
   }, [query, activeType, filterPokemons]);
 
+  useEffect(() => {
+    console.log("filteredPokemons: ", filteredPokemons);
+  }, [filteredPokemons]);
+
   const handleInputChange = (newQuery) => {
     // Get Key word for Search from Search box
     setQuery(newQuery);
@@ -357,7 +361,7 @@ function App() {
                   })}
               </div>
               {loading && offset <= 1025 && <p>{t("loading")}</p>}
-              {filteredPokemons.length === 0 && (
+              {filteredPokemons[pageLang].length === 0 && (
                 <p>
                   {t("messages.noFound1")}
                   <br />
