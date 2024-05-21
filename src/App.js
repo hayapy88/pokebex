@@ -107,13 +107,13 @@ function App() {
       };
 
       const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
-        console.log("Try putPokemonDataForEachLang");
+        // console.log("Try putPokemonDataForEachLang");
         console.log("receivedRawPokemonData", receivedRawPokemonData);
         for (const pokemon of receivedRawPokemonData) {
           // URL OK
           const speciesResponse = await fetch(pokemon.species.url);
           const speciesData = await speciesResponse.json();
-          console.log("speciesData", speciesData);
+          // console.log("speciesData", speciesData);
 
           // Fetch Name
           const nameEN = speciesData.names.find(
@@ -130,7 +130,7 @@ function App() {
             // URL OK
             const typesResponse = await fetch(type.type.url);
             const typesData = await typesResponse.json();
-            console.log("typesData", typesData);
+            // console.log("typesData", typesData);
 
             const typeEnEntry = typesData.names.find(
               (entry) => entry.language.name === "en"
@@ -141,7 +141,7 @@ function App() {
             typesEnArray.push(typeEnEntry.name);
             typesJaArray.push(typeJaEntry.name);
           }
-          console.log("pokemon.species", pokemon.species);
+          // console.log("pokemon.species", pokemon.species);
 
           // Fetch Genus
           const genusEnEntry = await speciesData.genera.find(
@@ -171,7 +171,7 @@ function App() {
               weight: pokemon.weight,
               image: pokemonImage,
             });
-            console.log("_pokemonData2.en", _pokemonData2.en);
+            // console.log("_pokemonData2.en", _pokemonData2.en);
           }
           if (nameJA) {
             _pokemonData2.ja.push({
@@ -183,7 +183,7 @@ function App() {
               weight: pokemon.weight,
               image: pokemonImage,
             });
-            console.log("_pokemonData2.ja", _pokemonData2.ja);
+            // console.log("_pokemonData2.ja", _pokemonData2.ja);
           }
         }
         if (mount) {
@@ -200,7 +200,7 @@ function App() {
       };
 
       getEachPokemonData(receivedPokemonsArray);
-      console.log(receivedPokemonsArray);
+      console.log("receivedPokemonsArray: ", receivedPokemonsArray);
 
       setCenterLoading(false);
     };
@@ -219,6 +219,7 @@ function App() {
     (query, activeType) => {
       // キーワード検索と選択されたタイプから名前とタイプでポケモンをフィルタリング
 
+      console.log("query", query);
       const typeTranslations = {
         むし: "bug",
         やみ: "dark",
@@ -243,14 +244,14 @@ function App() {
       if (i18n.language === "en" && pokemonData2.en) {
         console.log("en in filterPokemons");
         const filteredEnPokemon = pokemonData2.en.filter((pokemon) => {
-          console.log("Pokemon Types:", pokemon.types);
-          console.log("pokemon", pokemon);
-          console.log(pokemon.name.toLowerCase().includes(query.toLowerCase()));
-          console.log(
-            pokemon.types.some((aTypes) =>
-              activeType.includes(aTypes.toLowerCase())
-            )
-          );
+          // console.log("Pokemon Types:", pokemon.types);
+          // console.log("pokemon", pokemon);
+          // console.log(pokemon.name.toLowerCase().includes(query.toLowerCase()));
+          // console.log(
+          //   pokemon.types.some((aTypes) =>
+          //     activeType.includes(aTypes.toLowerCase())
+          //   )
+          // );
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
             pokemon.types.some((aTypes) =>
@@ -262,18 +263,18 @@ function App() {
       } else if (i18n.language === "ja" && pokemonData2.ja) {
         console.log("ja in filterPokemons");
         const filteredJaPokemon = pokemonData2.ja.filter((pokemon) => {
-          console.log("Pokemon Types:", pokemon.types);
-          console.log("pokemon", pokemon);
-          console.log(
-            "pokemon.name.toLowerCase().includes(query.toLowerCase())",
-            pokemon.name.toLowerCase().includes(query.toLowerCase())
-          );
-          console.log(
-            "activeType.includes(aTypes.toLowerCase())",
-            pokemon.types.some((aTypes) =>
-              activeType.includes(typeTranslations[aTypes])
-            )
-          );
+          // console.log("Pokemon Types:", pokemon.types);
+          // console.log("pokemon", pokemon);
+          // console.log(
+          //   "pokemon.name.toLowerCase().includes(query.toLowerCase())",
+          //   pokemon.name.toLowerCase().includes(query.toLowerCase())
+          // );
+          // console.log(
+          //   "activeType.includes(aTypes.toLowerCase())",
+          //   pokemon.types.some((aTypes) =>
+          //     activeType.includes(typeTranslations[aTypes])
+          //   )
+          // );
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
             pokemon.types.some((aTypes) =>
@@ -294,7 +295,7 @@ function App() {
   const handleInputChange = (newQuery) => {
     // Get Key word for Search from Search box
     setQuery(newQuery);
-    filterPokemons();
+    filterPokemons(query, activeType);
   };
   const handleAllTypes = () => {
     // Pokemon Types All ON / All Off
