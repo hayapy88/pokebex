@@ -150,8 +150,8 @@ function App() {
           const genusJaEntry = await speciesData.genera.find(
             (entry) => entry.language.name === "ja"
           );
-          const genusEn = genusEnEntry.genus;
-          const genusJa = genusJaEntry.genus;
+          const genusEn = genusEnEntry ? genusEnEntry.genus : null;
+          const genusJa = genusJaEntry ? genusJaEntry.genus : null;
 
           // Fetch image
           const pokemonImage = await pokemon.sprites.front_default;
