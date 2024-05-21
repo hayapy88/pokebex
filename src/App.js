@@ -217,12 +217,40 @@ function App() {
 
   const filterPokemons = useCallback(
     (query, activeType) => {
-      // Filter Pokemon by Name and Type from Keyword Search and Selected Types
-      if (pokemonData2.pageLang) {
+      // キーワード検索と選択されたタイプから名前とタイプでポケモンをフィルタリング
+
+      const typeTranslations = {
+        むし: "bug",
+        やみ: "dark",
+        ドラゴン: "dragon",
+        でんき: "electric",
+        フェアリー: "fairy",
+        かくとう: "fighting",
+        ほのお: "fire",
+        ひこう: "flying",
+        ゴースト: "ghost",
+        くさ: "grass",
+        じめん: "ground",
+        こおり: "ice",
+        ノーマル: "normal",
+        どく: "poison",
+        エスパー: "psychic",
+        いわ: "rock",
+        はがね: "steel",
+        みず: "water",
+      };
+
+      if (i18n.language === "en" && pokemonData2.en) {
         console.log("en in filterPokemons");
-        filteredPokemons.pageLang = pokemonData2.pageLang.filter((pokemon) => {
+        const filteredEnPokemon = pokemonData2.en.filter((pokemon) => {
           console.log("Pokemon Types:", pokemon.types);
           console.log("pokemon", pokemon);
+          console.log(pokemon.name.toLowerCase().includes(query.toLowerCase()));
+          console.log(
+            pokemon.types.some((aTypes) =>
+              activeType.includes(aTypes.toLowerCase())
+            )
+          );
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
             pokemon.types.some((aTypes) =>
@@ -230,37 +258,43 @@ function App() {
             )
           );
         });
+        setFilteredPokemons({ en: filteredEnPokemon });
+      } else if (i18n.language === "ja" && pokemonData2.ja) {
+        console.log("ja in filterPokemons");
+        const filteredJaPokemon = pokemonData2.ja.filter((pokemon) => {
+          console.log("Pokemon Types:", pokemon.types);
+          console.log("pokemon", pokemon);
+          console.log(
+            "pokemon.name.toLowerCase().includes(query.toLowerCase())",
+            pokemon.name.toLowerCase().includes(query.toLowerCase())
+          );
+          console.log(
+            "activeType.includes(aTypes.toLowerCase())",
+            pokemon.types.some((aTypes) =>
+              activeType.includes(typeTranslations[aTypes])
+            )
+          );
+          return (
+            pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
+            pokemon.types.some((aTypes) =>
+              activeType.includes(typeTranslations[aTypes])
+            )
+          );
+        });
+        setFilteredPokemons({ ja: filteredJaPokemon });
       }
-
-      console.log("filteredPokemons", filteredPokemons);
-      return filteredPokemons;
     },
-    [pokemonData2.pageLang, filteredPokemons]
+    [i18n.language, pokemonData2.en, pokemonData2.ja]
   );
 
   useEffect(() => {
-    console.log("Current query:", query);
-    console.log("Active types:", activeType);
-  }, [query, activeType]);
-
-  const fetchFilteredPokemons = useCallback(
-    (query, activeType) => {
-      console.log("fetchFilteredPokemons executed");
-      console.log("pokemonData2 before filter:", pokemonData2);
-      const result = filterPokemons(query, activeType);
-      setFilteredPokemons(result);
-    },
-    [filterPokemons, pokemonData2]
-  );
-
-  // useEffect(() => {
-  //   fetchFilteredPokemons(query, activeType);
-  // }, [query, activeType, pageLang, fetchFilteredPokemons]);
+    filterPokemons(query, activeType);
+  }, [query, activeType, filterPokemons]);
 
   const handleInputChange = (newQuery) => {
     // Get Key word for Search from Search box
     setQuery(newQuery);
-    fetchFilteredPokemons();
+    filterPokemons();
   };
   const handleAllTypes = () => {
     // Pokemon Types All ON / All Off
@@ -306,7 +340,7 @@ function App() {
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 mt-8 sm:mt-14 pt-6 mb-4">
                 {filteredPokemons[pageLang] &&
                   filteredPokemons[pageLang].map((pokemon, index) => {
-                    console.log("pokemon: " + index, pokemon);
+                    // console.log("pokemon: " + index, pokemon);
                     return (
                       <Card
                         key={index}
