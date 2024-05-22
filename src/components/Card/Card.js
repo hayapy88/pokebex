@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import Types from "./Types";
 
 const Card = React.forwardRef(({ pokemon }, ref) => {
-  // `index`は使用しないため削除
   const { t } = useTranslation();
   const meterHeight = pokemon.height / 10;
   const kgWeight = pokemon.weight / 10;
@@ -11,13 +10,13 @@ const Card = React.forwardRef(({ pokemon }, ref) => {
   return (
     <div
       className="card mx-3 sm:mx-2 p-8 bg-blue-50 border rounded-lg shadow-lg"
-      ref={ref} // `key`は親コンポーネントで使用するため削除
+      ref={ref}
     >
       <div className="cardImg">
         {pokemon.image ? (
           <img src={pokemon.image} alt={pokemon.name} className="mx-auto" />
         ) : (
-          <p>{t("messages.imageNotAvailable")}</p> // 画像がない場合の代替テキスト
+          <p>{t("messages.imageNotAvailable")}</p>
         )}
       </div>
       <h3 className="cardName mb-3 text-2xl font-bold capitalize">

@@ -45,14 +45,14 @@ const Types = ({ types }) => {
   };
 
   if (!types || types.length === 0) {
-    return <p>{t("messages.noTypes")}</p>; // タイプがない場合の代替メッセージ
+    return <p>{t("messages.noTypes")}</p>;
   }
 
   return (
     <>
       {types.map((type, i) => {
         if (!type) {
-          return null; // typeがundefinedの場合は無視
+          return null; // Ignore undefined
         }
         const englishType = typeTranslations[type] || type.toLowerCase();
         const typeClass = typeColors[englishType] || "bg-gray-400";

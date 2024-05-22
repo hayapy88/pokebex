@@ -212,9 +212,8 @@ function App() {
 
   const filterPokemons = useCallback(
     (query, activeType) => {
-      // キーワード検索と選択されたタイプから名前とタイプでポケモンをフィルタリング
-
-      console.log("query", query);
+      // Filter Pokemon functions by keyword and types
+      // console.log("query", query);
       const typeTranslations = {
         むし: "bug",
         やみ: "dark",
