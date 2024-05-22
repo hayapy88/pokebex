@@ -8,13 +8,12 @@ import Search from "./components/Search/Search.js";
 import { useTranslation } from "react-i18next";
 
 function App() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(); // i18next
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [loading, setLoading] = useState(false);
   const [pageLang, setPageLang] = useState(i18n.language);
   const [centerLoading, setCenterLoading] = useState(true); // Center Loading
-  // const [pokemonData, setPokemonData] = useState([]); // Pokemon Data for displaying
-  const [pokemonData2, setPokemonData2] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
+  const [pokemonData, setPokemonData] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const pokemonTypes = [
     "bug",
@@ -86,7 +85,7 @@ function App() {
       console.log("receivedPokemonsArray", receivedPokemonsArray);
 
       // Get each Pokemon data and push to pokemonData
-      const _pokemonData2 = {
+      const _pokemonData = {
         en: [],
         ja: [],
       };
@@ -103,7 +102,7 @@ function App() {
         );
         console.log("_rawPokemonData", _rawPokemonData);
         await putPokemonDataForEachLang(_rawPokemonData);
-        console.log("_pokemonData2", _pokemonData2);
+        console.log("_pokemonData", _pokemonData);
       };
 
       const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
@@ -162,7 +161,7 @@ function App() {
 
           // Push data
           if (nameEN) {
-            _pokemonData2.en.push({
+            _pokemonData.en.push({
               name: nameEN.name,
               no: pokemon.id,
               types: typesEnArray,
@@ -171,10 +170,10 @@ function App() {
               weight: pokemon.weight,
               image: pokemonImage,
             });
-            // console.log("_pokemonData2.en", _pokemonData2.en);
+            // console.log("_pokemonData.en", _pokemonData.en);
           }
           if (nameJA) {
-            _pokemonData2.ja.push({
+            _pokemonData.ja.push({
               name: nameJA.name,
               no: pokemon.id,
               types: typesJaArray,
@@ -183,17 +182,13 @@ function App() {
               weight: pokemon.weight,
               image: pokemonImage,
             });
-            // console.log("_pokemonData2.ja", _pokemonData2.ja);
+            // console.log("_pokemonData.ja", _pokemonData.ja);
           }
         }
         if (mount) {
-          // setPokemonData((prevPokemonData) => [
-          //   ...prevPokemonData,
-          //   ..._rawPokemonData,
-          // ]);
-          setPokemonData2((prevPokemonData2) => ({
-            en: [...prevPokemonData2.en, ..._pokemonData2.en],
-            ja: [...prevPokemonData2.ja, ..._pokemonData2.ja],
+          setPokemonData((prevPokemonData) => ({
+            en: [...prevPokemonData.en, ..._pokemonData.en],
+            ja: [...prevPokemonData.ja, ..._pokemonData.ja],
           }));
           setLoading(false);
         }
@@ -211,9 +206,9 @@ function App() {
   }, [page, offset]);
 
   useEffect(() => {
-    console.log("Updated pokemonData2", pokemonData2);
-    setFilteredPokemons(pokemonData2);
-  }, [pokemonData2]);
+    console.log("Updated pokemonData", pokemonData);
+    setFilteredPokemons(pokemonData);
+  }, [pokemonData]);
 
   const filterPokemons = useCallback(
     (query, activeType) => {
@@ -241,17 +236,9 @@ function App() {
         みず: "water",
       };
 
-      if (i18n.language === "en" && pokemonData2.en) {
+      if (i18n.language === "en" && pokemonData.en) {
         console.log("en in filterPokemons");
-        const filteredEnPokemon = pokemonData2.en.filter((pokemon) => {
-          // console.log("Pokemon Types:", pokemon.types);
-          // console.log("pokemon", pokemon);
-          // console.log(pokemon.name.toLowerCase().includes(query.toLowerCase()));
-          // console.log(
-          //   pokemon.types.some((aTypes) =>
-          //     activeType.includes(aTypes.toLowerCase())
-          //   )
-          // );
+        const filteredEnPokemon = pokemonData.en.filter((pokemon) => {
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
             pokemon.types.some((aTypes) =>
@@ -260,21 +247,9 @@ function App() {
           );
         });
         setFilteredPokemons({ en: filteredEnPokemon });
-      } else if (i18n.language === "ja" && pokemonData2.ja) {
+      } else if (i18n.language === "ja" && pokemonData.ja) {
         console.log("ja in filterPokemons");
-        const filteredJaPokemon = pokemonData2.ja.filter((pokemon) => {
-          // console.log("Pokemon Types:", pokemon.types);
-          // console.log("pokemon", pokemon);
-          // console.log(
-          //   "pokemon.name.toLowerCase().includes(query.toLowerCase())",
-          //   pokemon.name.toLowerCase().includes(query.toLowerCase())
-          // );
-          // console.log(
-          //   "activeType.includes(aTypes.toLowerCase())",
-          //   pokemon.types.some((aTypes) =>
-          //     activeType.includes(typeTranslations[aTypes])
-          //   )
-          // );
+        const filteredJaPokemon = pokemonData.ja.filter((pokemon) => {
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
             pokemon.types.some((aTypes) =>
@@ -285,7 +260,7 @@ function App() {
         setFilteredPokemons({ ja: filteredJaPokemon });
       }
     },
-    [i18n.language, pokemonData2.en, pokemonData2.ja]
+    [i18n.language, pokemonData.en, pokemonData.ja]
   );
 
   useEffect(() => {
@@ -360,14 +335,16 @@ function App() {
                     );
                   })}
               </div>
-              {loading && offset <= 1025 && <p>{t("loading")}</p>}
-              {!loading && filteredPokemons[pageLang].length === 0 && (
-                <p>
-                  {t("messages.noFound1")}
-                  <br />
-                  {t("messages.noFound2")}
-                </p>
-              )}
+              <div>
+                {loading && offset <= 1025 && <p>{t("loading")}</p>}
+                {!loading && filteredPokemons[pageLang].length === 0 && (
+                  <p>
+                    {t("messages.noFound1")}
+                    <br />
+                    {t("messages.noFound2")}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
