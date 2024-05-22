@@ -361,7 +361,7 @@ function App() {
                   })}
               </div>
               {loading && offset <= 1025 && <p>{t("loading")}</p>}
-              {filteredPokemons[pageLang].length === 0 && (
+              {!loading && filteredPokemons[pageLang].length === 0 && (
                 <p>
                   {t("messages.noFound1")}
                   <br />
