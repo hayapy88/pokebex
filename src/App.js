@@ -260,10 +260,22 @@ const App = () => {
     setFilteredPokemons(pokemonData);
   }, [pokemonData]);
 
+  /*
+   * Filter Pokemons for display
+   * - Filter by name and types
+   *
+   * @param
+   * - {string} query - the value in Pokemon name search box
+   * - {array} activeType - Array of active types
+   *
+   * @dependencies
+   * - i18n.language: When language is changes
+   * - pokemonData.en: When pokemonData.en is changed
+   * - pokemonData.ja: When pokemonData.ja is changed
+   */
   const filterPokemons = useCallback(
     (query, activeType) => {
-      // Filter Pokemon functions by keyword and types
-      // console.log("query", query);
+      // Mapping types between Japanese and English
       const typeTranslations = {
         むし: "bug",
         あく: "dark",
@@ -286,7 +298,7 @@ const App = () => {
       };
 
       if (i18n.language === "en" && pokemonData.en) {
-        console.log("en in filterPokemons");
+        // Filter by name and types for English
         const filteredEnPokemon = pokemonData.en.filter((pokemon) => {
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
@@ -295,9 +307,10 @@ const App = () => {
             )
           );
         });
+        // Update filteredPokemons for English
         setFilteredPokemons({ en: filteredEnPokemon });
       } else if (i18n.language === "ja" && pokemonData.ja) {
-        console.log("ja in filterPokemons");
+        // Filter by name and types for Japanese
         const filteredJaPokemon = pokemonData.ja.filter((pokemon) => {
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
@@ -306,38 +319,54 @@ const App = () => {
             )
           );
         });
+        // Update filteredPokemons for Japanese
         setFilteredPokemons({ ja: filteredJaPokemon });
       }
     },
     [i18n.language, pokemonData.en, pokemonData.ja]
   );
-
+  // Filter pokemons when query or activeTypes is changed
   useEffect(() => {
     filterPokemons(query, activeType);
     console.log(activeType);
   }, [query, activeType, filterPokemons]);
-
+  // For checking the contents of filteredPokemons
   useEffect(() => {
     console.log("filteredPokemons: ", filteredPokemons);
   }, [filteredPokemons]);
 
+  /*
+   * Update query which is the keyword to filter by name
+   * 1. Get Key word from Pokemon name Search box
+   * 2. Update query by the keyword
+   *
+   * @param
+   * - {string} newQuery - the value in Pokemon name search box
+   */
   const handleInputChange = (newQuery) => {
-    // Get Key word for Search from Search box
     setQuery(newQuery);
     filterPokemons(query, activeType);
   };
+
+  /*
+   * Switch active types by All types On or Off button clicking
+   * - Get click event on the #allTypes button element
+   */
   const handleAllTypes = () => {
-    // Pokemon Types All ON / All Off
     if (activeType.length >= 1) {
       console.log("All OFF");
-      setActiveType([]);
+      setActiveType([]); // Cancel all active types
     } else {
       console.log("All ON");
-      setActiveType(pokemonTypes);
+      setActiveType(pokemonTypes); // Set all active types
     }
   };
+  /*
+   * Add or remove active types by each type click
+   * - 1. Get click event on each type
+   * - 2. Update the type
+   */
   const handleTypeClick = (clickedType) => {
-    // Update active types by clicked type
     setActiveType((prevActiveType) => {
       if (prevActiveType.includes(clickedType)) {
         return prevActiveType.filter((type) => type !== clickedType); // As they are
@@ -346,8 +375,6 @@ const App = () => {
       }
     });
   };
-
-  // console.log(pokemonData);
 
   return (
     <>
