@@ -25,7 +25,7 @@ const Types = ({ types }) => {
   };
   const typeTranslations = {
     むし: "bug",
-    やみ: "dark",
+    あく: "dark",
     ドラゴン: "dragon",
     でんき: "electric",
     フェアリー: "fairy",
