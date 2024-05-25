@@ -1,18 +1,18 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import "./App.css";
+import { useTranslation } from "react-i18next";
 import { getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import CenterLoading from "./components/Loading/CenterLoading.js";
 import Search from "./components/Search/Search.js";
-import { useTranslation } from "react-i18next";
+import "./App.css";
 
-function App() {
+const App = () => {
   const { t, i18n } = useTranslation(); // i18next
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
-  const [loading, setLoading] = useState(false);
-  const [pageLang, setPageLang] = useState(i18n.language);
-  const [centerLoading, setCenterLoading] = useState(true); // Center Loading
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [pageLang, setPageLang] = useState(i18n.language); // To observe page language
+  const [centerLoading, setCenterLoading] = useState(true); // Center Loading when initial loading
   const [pokemonData, setPokemonData] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const pokemonTypes = [
@@ -38,40 +38,66 @@ function App() {
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
   const [filteredPokemons, setFilteredPokemons] = useState({ en: [], ja: [] });
 
-  useEffect(() => {
-    setPageLang(i18n.language);
-  }, [i18n.language]);
-
+  /*
+   * Infinite Scroll
+   * - Use IntersectionObserver.
+   * - When the last item comes into the screen, the next bunch of pokemon data will be fetched.
+   *
+   * @param {object} node - The last item in filteredPokemons
+   *
+   * @dependencies
+   * - isLoading: The state of loading true or false
+   */
   const observer = useRef();
   const lastItemRef = useCallback(
     (node) => {
-      if (loading) return;
+      if (isLoading) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           setPage((prev) => prev + 1);
-          setLoading(false);
+          setIsLoading(false);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [loading]
+    [isLoading]
   );
-  console.log("pageLang", pageLang);
 
+  // Update current language
+  useEffect(() => {
+    setPageLang(i18n.language);
+  }, [i18n.language]);
+
+  /*
+   * Fetch pokemons
+   * - A chain of fetching pokemon data
+   *
+   * @dependencies
+   * - page: The trigger to update fetch URL to fetch next pokemons
+   * - offset: The number of already fetched pokemons
+   */
   // Fetch pokemon 30 by 30
   const offset = `${30 * (page - 1)}`;
 
   useEffect(() => {
-    let mount = true;
+    // Track mount
+    let isMounted = true;
 
-    // Max number of Fetching Pokemon
+    // Finish fetching pokemon after reaching 1024
     if (offset > 1025) {
       return;
     }
 
-    setLoading(true);
+    // Display loading messages
+    setIsLoading(true);
 
+    /*
+     * Fetch Pokemon Data
+     * 1. Create API URL to fetch pokemon data - Poke API: https://pokeapi.co/
+     * 2. Fetch pokemon data
+     * 3. Reserve pokemon data for each language into the pokemonData state
+     */
     const fetchPokemonData = async () => {
       // Update Pokemon URL
       const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`;
@@ -89,27 +115,47 @@ function App() {
         en: [],
         ja: [],
       };
+
+      /*
+       * Fetch each pokemon data
+       * - Fetch pokemon data 1 by 1
+       * - Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
+       * - Store each pokemon data into _rawPokemonData array
+       * - pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
+       *
+       * @param {array} receivedPokemons - receivedPokemonsArray
+       */
       const getEachPokemonData = async (receivedPokemons) => {
         let _rawPokemonData = await Promise.all(
           receivedPokemons.map((pokemon) => {
-            // console.log("receivedPokemons", receivedPokemons);
-
-            // Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
-            console.log("Try getEachPokemonData");
-            // URL OK
-            return getPokemon(pokemon.url); // pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
+            return getPokemon(pokemon.url);
           })
         );
         console.log("_rawPokemonData", _rawPokemonData);
         await putPokemonDataForEachLang(_rawPokemonData);
-        console.log("_pokemonData", _pokemonData);
+        console.log("_pokemonData: ", _pokemonData);
       };
+      getEachPokemonData(receivedPokemonsArray);
+      // console.log("receivedPokemonsArray: ", receivedPokemonsArray);
 
+      /*
+       * Put fetched pokemon data into each language array in pokemonData state
+       * 1. Fetch each pokemon data as below:
+       * - name,
+       * - no,
+       * - types,
+       * - genus,
+       * - weight,
+       * - height,
+       * - image
+       * 2. Push them into _pokemonData array for each language
+       * 3. Add them into pokemonData array for each language
+       *
+       * @param {array} receivedRawPokemonData - _rawPokemonData[{},{}]
+       */
       const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
-        // console.log("Try putPokemonDataForEachLang");
         console.log("receivedRawPokemonData", receivedRawPokemonData);
         for (const pokemon of receivedRawPokemonData) {
-          // URL OK
           const speciesResponse = await fetch(pokemon.species.url);
           const speciesData = await speciesResponse.json();
           // console.log("speciesData", speciesData);
@@ -126,7 +172,6 @@ function App() {
           const typesEnArray = [];
           const typesJaArray = [];
           for (const type of pokemon.types) {
-            // URL OK
             const typesResponse = await fetch(type.type.url);
             const typesData = await typesResponse.json();
             // console.log("typesData", typesData);
@@ -185,38 +230,55 @@ function App() {
             // console.log("_pokemonData.ja", _pokemonData.ja);
           }
         }
-        if (mount) {
+
+        // Update pokemonData
+        if (isMounted) {
           setPokemonData((prevPokemonData) => ({
             en: [...prevPokemonData.en, ..._pokemonData.en],
             ja: [...prevPokemonData.ja, ..._pokemonData.ja],
           }));
-          setLoading(false);
+
+          // Hide loading messages
+          setIsLoading(false);
         }
       };
 
-      getEachPokemonData(receivedPokemonsArray);
-      console.log("receivedPokemonsArray: ", receivedPokemonsArray);
-
+      // Initial loading screen off
       setCenterLoading(false);
     };
+    // Execute fetchPokemonData()
     fetchPokemonData();
+
+    // Cleanup function
     return () => {
-      mount = false;
+      isMounted = false;
     };
   }, [page, offset]);
 
+  // Update filteredPokemons for displaying
   useEffect(() => {
-    console.log("Updated pokemonData", pokemonData);
     setFilteredPokemons(pokemonData);
   }, [pokemonData]);
 
+  /*
+   * Filter Pokemons for display
+   * - Filter by name and types
+   *
+   * @param
+   * - {string} query - the value in Pokemon name search box
+   * - {array} activeType - Array of active types
+   *
+   * @dependencies
+   * - i18n.language: When language is changes
+   * - pokemonData.en: When pokemonData.en is changed
+   * - pokemonData.ja: When pokemonData.ja is changed
+   */
   const filterPokemons = useCallback(
     (query, activeType) => {
-      // Filter Pokemon functions by keyword and types
-      // console.log("query", query);
+      // Mapping types between Japanese and English
       const typeTranslations = {
         むし: "bug",
-        やみ: "dark",
+        あく: "dark",
         ドラゴン: "dragon",
         でんき: "electric",
         フェアリー: "fairy",
@@ -236,7 +298,7 @@ function App() {
       };
 
       if (i18n.language === "en" && pokemonData.en) {
-        console.log("en in filterPokemons");
+        // Filter by name and types for English
         const filteredEnPokemon = pokemonData.en.filter((pokemon) => {
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
@@ -245,9 +307,10 @@ function App() {
             )
           );
         });
+        // Update filteredPokemons for English
         setFilteredPokemons({ en: filteredEnPokemon });
       } else if (i18n.language === "ja" && pokemonData.ja) {
-        console.log("ja in filterPokemons");
+        // Filter by name and types for Japanese
         const filteredJaPokemon = pokemonData.ja.filter((pokemon) => {
           return (
             pokemon.name.toLowerCase().includes(query.toLowerCase()) &&
@@ -256,37 +319,57 @@ function App() {
             )
           );
         });
+        // Update filteredPokemons for Japanese
         setFilteredPokemons({ ja: filteredJaPokemon });
       }
     },
     [i18n.language, pokemonData.en, pokemonData.ja]
   );
-
+  // Filter pokemons when query or activeTypes is changed
   useEffect(() => {
     filterPokemons(query, activeType);
+    console.log(activeType);
   }, [query, activeType, filterPokemons]);
-
+  // For checking the contents of filteredPokemons
   useEffect(() => {
     console.log("filteredPokemons: ", filteredPokemons);
   }, [filteredPokemons]);
 
+  /*
+   * Update query which is the keyword to filter by name
+   * 1. Get Key word from Pokemon name Search box
+   * 2. Update query by the keyword
+   *
+   * @param
+   * - {string} newQuery - the value in Pokemon name search box
+   */
   const handleInputChange = (newQuery) => {
-    // Get Key word for Search from Search box
     setQuery(newQuery);
     filterPokemons(query, activeType);
   };
+
+  /*
+   * Switch active types by All types On or Off button clicking
+   * - Get click event on the #allTypes button element
+   */
   const handleAllTypes = () => {
-    // Pokemon Types All ON / All Off
     if (activeType.length >= 1) {
       console.log("All OFF");
-      setActiveType([]);
+      setActiveType([]); // Cancel all active types
     } else {
       console.log("All ON");
-      setActiveType(pokemonTypes);
+      setActiveType(pokemonTypes); // Set all active types
     }
   };
+  /*
+   * Update active types to filter pokemon by types
+   * - 1. Get click event on each type
+   * - 2. Update the type
+   *
+   * @param
+   * - {string} clickedType - The type the user clicked
+   */
   const handleTypeClick = (clickedType) => {
-    // Update active types by clicked type
     setActiveType((prevActiveType) => {
       if (prevActiveType.includes(clickedType)) {
         return prevActiveType.filter((type) => type !== clickedType); // As they are
@@ -295,9 +378,6 @@ function App() {
       }
     });
   };
-  // console.log(activeType);
-
-  // console.log(pokemonData);
 
   return (
     <>
@@ -309,8 +389,8 @@ function App() {
           <div className="text-center py-12">
             <div className="container mx-auto">
               <Search
-                onSearchChange={handleInputChange}
-                onTypeClick={handleTypeClick}
+                handleInputChange={handleInputChange}
+                handleTypeClick={handleTypeClick}
                 activeType={activeType}
                 pokemonTypes={pokemonTypes}
                 handleAllTypes={handleAllTypes}
@@ -335,8 +415,8 @@ function App() {
                   })}
               </div>
               <div>
-                {loading && offset <= 1025 && <p>{t("loading")}</p>}
-                {!loading && filteredPokemons[pageLang].length === 0 && (
+                {isLoading && offset <= 1025 && <p>{t("loading")}</p>}
+                {!isLoading && filteredPokemons[pageLang].length === 0 && (
                   <p>
                     {t("messages.noFound1")}
                     <br />
@@ -350,6 +430,6 @@ function App() {
       )}
     </>
   );
-}
+};
 
 export default App;
