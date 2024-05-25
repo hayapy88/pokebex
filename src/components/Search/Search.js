@@ -1,12 +1,20 @@
 import { React } from "react";
 
-function importTypeIconsAll(r) {
-  return r.keys().map(r);
+/*
+ * Import types' images
+ * 1. Create the array of the images processed with Base64
+ * 2. Execute importTypeIconsAll function and put their data into iconArray
+ *
+ * @param
+ * - {function} requireContextImages - require.context("../../images/", false, /\.png/) - the images settings in images directory
+ */
+function importTypeIconsAll(requireContextImages) {
+  return requireContextImages.keys().map(requireContextImages);
 }
-
-const icons = importTypeIconsAll(
+const iconsArray = importTypeIconsAll(
   require.context("../../images/", false, /\.png/)
 );
+console.log("iconsArray: ", iconsArray);
 
 const handleToggleTypes = () => {
   const typeIconsElm = document.getElementById("typeIcons");
@@ -32,7 +40,7 @@ const handleTypeSelect = (e, onTypeClick) => {
 };
 
 const IconsGallery = ({
-  icons,
+  iconsArray,
   pokemonTypes,
   onTypeClick,
   activeType,
@@ -55,7 +63,7 @@ const IconsGallery = ({
       id="typeIcons"
       className="hidden sm:flex items-center justify-center flex-wrap w-20 sm:w-72 mt-1 sm:mt-0"
     >
-      {icons.map((icon, index) => (
+      {iconsArray.map((icon, index) => (
         <div
           className={`typeIcon my-1 mx-1 sm:ml-2 sm:mr-0 cursor-pointer ${
             activeType.includes(pokemonTypes[index]) ? "active" : ""
@@ -110,7 +118,7 @@ const Search = ({
           </svg>
         </div>
         <IconsGallery
-          icons={icons}
+          iconsArray={iconsArray}
           pokemonTypes={pokemonTypes}
           onTypeClick={onTypeClick}
           activeType={activeType}

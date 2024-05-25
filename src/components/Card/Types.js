@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 const Types = ({ types }) => {
   const { t } = useTranslation();
+  // Allocate background-color className for each type
   const typeColors = {
     bug: "bg-lime-500/80",
     dark: "bg-gray-800/80",
@@ -23,6 +24,8 @@ const Types = ({ types }) => {
     steel: "bg-teal-700/70",
     water: "bg-blue-500/90",
   };
+
+  // Mapping types between Japanese and English
   const typeTranslations = {
     むし: "bug",
     あく: "dark",
@@ -44,6 +47,7 @@ const Types = ({ types }) => {
     みず: "water",
   };
 
+  // In the case of no types
   if (!types || types.length === 0) {
     return <p>{t("messages.noTypes")}</p>;
   }
@@ -51,6 +55,7 @@ const Types = ({ types }) => {
   return (
     <>
       {types.map((type, i) => {
+        // To display each type and fill background-color with tailwind.css depending on types
         if (!type) {
           return null; // Ignore undefined
         }
