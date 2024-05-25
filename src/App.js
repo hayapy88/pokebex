@@ -362,9 +362,12 @@ const App = () => {
     }
   };
   /*
-   * Add or remove active types by each type click
+   * Update active types to filter pokemon by types
    * - 1. Get click event on each type
    * - 2. Update the type
+   *
+   * @param
+   * - {string} clickedType - The type the user clicked
    */
   const handleTypeClick = (clickedType) => {
     setActiveType((prevActiveType) => {
@@ -386,8 +389,8 @@ const App = () => {
           <div className="text-center py-12">
             <div className="container mx-auto">
               <Search
-                onSearchChange={handleInputChange}
-                onTypeClick={handleTypeClick}
+                handleInputChange={handleInputChange}
+                handleTypeClick={handleTypeClick}
                 activeType={activeType}
                 pokemonTypes={pokemonTypes}
                 handleAllTypes={handleAllTypes}

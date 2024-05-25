@@ -14,35 +14,46 @@ function importTypeIconsAll(requireContextImages) {
 const iconsArray = importTypeIconsAll(
   require.context("../../images/", false, /\.png/)
 );
-console.log("iconsArray: ", iconsArray);
+// console.log("iconsArray: ", iconsArray);
 
+/*
+ * The behavior of clicking Type button
+ * Type Button comes out when the screen width < 640px
+ * Type drawer - OPENED => Behavior - CLOSED
+ * Type drawer - CLOSED => Behavior - OPENED
+ */
 const handleToggleTypes = () => {
-  const typeIconsElm = document.getElementById("typeIcons");
-  const allTypesElm = document.getElementById("allTypes");
+  const typeIconsEl = document.getElementById("typeIcons"); // Type icons area
+  const allTypesEl = document.getElementById("allTypes"); // All Types ON/OFF button
   if (
-    typeIconsElm.classList.contains("hidden") ||
-    allTypesElm.classList.contains("hidden")
+    typeIconsEl.classList.contains("hidden") ||
+    allTypesEl.classList.contains("hidden")
   ) {
-    typeIconsElm.classList.remove("hidden");
-    allTypesElm.classList.remove("hidden");
-    typeIconsElm.classList.add("flex");
+    typeIconsEl.classList.remove("hidden");
+    allTypesEl.classList.remove("hidden");
+    typeIconsEl.classList.add("flex");
   } else {
-    typeIconsElm.classList.add("hidden");
-    allTypesElm.classList.add("hidden");
+    typeIconsEl.classList.add("hidden");
+    allTypesEl.classList.add("hidden");
   }
 };
 
-const handleTypeSelect = (e, onTypeClick) => {
-  const type = e.target.getAttribute("data-type");
-  console.log(type);
-
-  onTypeClick(type);
-};
-
+/*
+ * IconsGallery functional component
+ * - Output Type Icons area
+ *
+ * @param
+ * {Array.<string>} iconsArray - icon images array
+ * {Array.<string>} pokemonTypes - Types Pokemon has
+ * {function} handleTypeClick - Update active types to filter pokemon by types
+ * {Array.<string>} activeType - Update active type
+ * {function} handleAllTypes - Switch active types by All types On or Off button clicking
+ * {function} t - Translation function
+ */
 const IconsGallery = ({
   iconsArray,
   pokemonTypes,
-  onTypeClick,
+  handleTypeClick,
   activeType,
   handleAllTypes,
   t,
@@ -75,7 +86,7 @@ const IconsGallery = ({
             src={icon}
             alt={`Type: ${pokemonTypes[index]}`}
             data-type={`${pokemonTypes[index]}`}
-            onClick={(e) => handleTypeSelect(e, onTypeClick)}
+            onClick={(e) => handleTypeClick(e.target.getAttribute("data-type"))}
           />
         </div>
       ))}
@@ -84,8 +95,8 @@ const IconsGallery = ({
 );
 
 const Search = ({
-  onSearchChange,
-  onTypeClick,
+  handleInputChange,
+  handleTypeClick,
   activeType,
   pokemonTypes,
   handleAllTypes,
@@ -100,7 +111,7 @@ const Search = ({
             id="username"
             type="text"
             placeholder={t("search")}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={(e) => handleInputChange(e.target.value)}
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +131,7 @@ const Search = ({
         <IconsGallery
           iconsArray={iconsArray}
           pokemonTypes={pokemonTypes}
-          onTypeClick={onTypeClick}
+          handleTypeClick={handleTypeClick}
           activeType={activeType}
           handleAllTypes={handleAllTypes}
           t={t}
