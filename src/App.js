@@ -77,8 +77,8 @@ const App = () => {
    * - page: The trigger to update fetch URL to fetch next pokemons
    * - offset: The number of already fetched pokemons
    */
-  // Fetch pokemon 30 by 30
-  const offset = `${30 * (page - 1)}`;
+  // Fetch pokemon 12 by 12
+  const offset = `${12 * (page - 1)}`;
 
   useEffect(() => {
     // Track mount
@@ -100,7 +100,7 @@ const App = () => {
      */
     const fetchPokemonData = async () => {
       // Update Pokemon URL
-      const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`;
+      const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
 
       // Get Pokemon name and URL from limited fetchPokemonURL.
       // eg) [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }, {}, {}, ...]
