@@ -12,7 +12,7 @@ const App = () => {
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [pageLang, setPageLang] = useState(i18n.language); // To observe page language
-  const [centerLoading, setCenterLoading] = useState(true); // Center Loading when initial loading
+  const [isComponentInitialized, setIsComponentInitialized] = useState(false); // Center Loading when initial loading
   const [pokemonData, setPokemonData] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const pokemonTypes = [
@@ -63,6 +63,37 @@ const App = () => {
     },
     [isLoading]
   );
+
+  useEffect(() => {
+    /*
+     * Activate i18next Initialization
+     * - Observe i18next Initialization
+     * - isComponentInitialized -> true
+     *
+     * @dependencies
+     * - i18n: eg - initialized, loaded, init
+     */
+    const handleInit = () => {
+      setIsComponentInitialized(true);
+    };
+
+    if (i18n.isInitialized) {
+      setTimeout(() => {
+        handleInit();
+      }, 2000);
+    } else {
+      i18n.on("initialized", handleInit);
+      i18n.on("loaded", handleInit);
+      i18n.on("init", handleInit);
+
+      // Cleanup
+      return () => {
+        i18n.off("initialized", handleInit);
+        i18n.off("loaded", handleInit);
+        i18n.off("init", handleInit);
+      };
+    }
+  }, [i18n]);
 
   // Update current language
   useEffect(() => {
@@ -242,9 +273,6 @@ const App = () => {
           setIsLoading(false);
         }
       };
-
-      // Initial loading screen off
-      setCenterLoading(false);
     };
     // Execute fetchPokemonData()
     fetchPokemonData();
@@ -381,7 +409,7 @@ const App = () => {
 
   return (
     <>
-      {centerLoading ? (
+      {!isComponentInitialized ? (
         <CenterLoading t={t} />
       ) : (
         <div className="h-full bg-blue-100">

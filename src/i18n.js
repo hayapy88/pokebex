@@ -24,6 +24,7 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    lng: navigator.language.startsWith("ja") ? "ja" : "en", // If User ja -> ja, other -> en
   });
 
 export default i18n;
