@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
@@ -109,179 +109,188 @@ const App = () => {
    * - offset: The number of already fetched pokemons
    */
   // Fetch pokemon 12 by 12
-  const offset = `${12 * (page - 1)}`;
+  const offset = useMemo(() => 12 * (page - 1), [page]);
+  // Limit fetching Pokemon to 1024
+  const isOffsetWithinLimit = useMemo(() => offset < 1025, [offset]);
 
-  useEffect(() => {
-    // Track mount
-    let isMounted = true;
-
-    // Finish fetching pokemon after reaching 1024
-    if (offset > 1025) {
-      return;
-    }
+  /*
+   * Fetch Pokemon Data
+   * 1. Create API URL to fetch pokemon data - Poke API: https://pokeapi.co/
+   * 2. Fetch pokemon data
+   * 3. Reserve pokemon data for each language into the pokemonData state
+   *
+   * @dependencies
+   * - isOffsetWithinLimit: Max number of fetching Pokemon
+   * - offset: Number of already fetched pokemon
+   */
+  const fetchPokemonData = useCallback(async () => {
+    console.log("Now Fetching Pokemon data");
+    if (!isOffsetWithinLimit) return;
 
     // Display loading messages
     setIsLoading(true);
 
-    /*
-     * Fetch Pokemon Data
-     * 1. Create API URL to fetch pokemon data - Poke API: https://pokeapi.co/
-     * 2. Fetch pokemon data
-     * 3. Reserve pokemon data for each language into the pokemonData state
-     */
-    const fetchPokemonData = async () => {
-      // Update Pokemon URL
-      const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
+    // Update Pokemon URL
+    const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
 
-      // Get Pokemon name and URL from limited fetchPokemonURL.
-      // eg) [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }, {}, {}, ...]
-      let response = await getPokemon(fetchPokemonURL);
-      console.log("API response:", response);
+    // Get Pokemon name and URL from limited fetchPokemonURL.
+    // eg) [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }, {}, {}, ...]
+    const response = await getPokemon(fetchPokemonURL);
+    console.log("API response:", response);
 
-      const receivedPokemonsArray = response.results;
-      console.log("receivedPokemonsArray", receivedPokemonsArray);
+    const receivedPokemonsArray = response.results;
+    console.log("receivedPokemonsArray", receivedPokemonsArray);
 
-      // Get each Pokemon data and push to pokemonData
-      const _pokemonData = {
-        en: [],
-        ja: [],
-      };
-
-      /*
-       * Fetch each pokemon data
-       * - Fetch pokemon data 1 by 1
-       * - Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
-       * - Store each pokemon data into _rawPokemonData array
-       * - pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
-       *
-       * @param {array} receivedPokemons - receivedPokemonsArray
-       */
-      const getEachPokemonData = async (receivedPokemons) => {
-        let _rawPokemonData = await Promise.all(
-          receivedPokemons.map((pokemon) => {
-            return getPokemon(pokemon.url);
-          })
-        );
-        console.log("_rawPokemonData", _rawPokemonData);
-        await putPokemonDataForEachLang(_rawPokemonData);
-        console.log("_pokemonData: ", _pokemonData);
-      };
-      getEachPokemonData(receivedPokemonsArray);
-      // console.log("receivedPokemonsArray: ", receivedPokemonsArray);
-
-      /*
-       * Put fetched pokemon data into each language array in pokemonData state
-       * 1. Fetch each pokemon data as below:
-       * - name,
-       * - no,
-       * - types,
-       * - genus,
-       * - weight,
-       * - height,
-       * - image
-       * 2. Push them into _pokemonData array for each language
-       * 3. Add them into pokemonData array for each language
-       *
-       * @param {array} receivedRawPokemonData - _rawPokemonData[{},{}]
-       */
-      const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
-        console.log("receivedRawPokemonData", receivedRawPokemonData);
-        for (const pokemon of receivedRawPokemonData) {
-          const speciesResponse = await fetch(pokemon.species.url);
-          const speciesData = await speciesResponse.json();
-          // console.log("speciesData", speciesData);
-
-          // Fetch Name
-          const nameEN = speciesData.names.find(
-            (entry) => entry.language.name === "en"
-          );
-          const nameJA = speciesData.names.find(
-            (entry) => entry.language.name === "ja"
-          );
-
-          // Fetch Types
-          const typesEnArray = [];
-          const typesJaArray = [];
-          for (const type of pokemon.types) {
-            const typesResponse = await fetch(type.type.url);
-            const typesData = await typesResponse.json();
-            // console.log("typesData", typesData);
-
-            const typeEnEntry = typesData.names.find(
-              (entry) => entry.language.name === "en"
-            );
-            const typeJaEntry = typesData.names.find(
-              (entry) => entry.language.name === "ja"
-            );
-            typesEnArray.push(typeEnEntry.name);
-            typesJaArray.push(typeJaEntry.name);
-          }
-          // console.log("pokemon.species", pokemon.species);
-
-          // Fetch Genus
-          const genusEnEntry = await speciesData.genera.find(
-            (entry) => entry.language.name === "en"
-          );
-          const genusJaEntry = await speciesData.genera.find(
-            (entry) => entry.language.name === "ja"
-          );
-          const genusEn = genusEnEntry ? genusEnEntry.genus : null;
-          const genusJa = genusJaEntry ? genusJaEntry.genus : null;
-
-          // Fetch image
-          const pokemonImage = await pokemon.sprites.front_default;
-
-          // Fetch No - no: pokemon.id
-          // Fetch Height - height: pokemon.height
-          // Fetch Weight - weight: pokemon.weight
-
-          // Push data
-          if (nameEN) {
-            _pokemonData.en.push({
-              name: nameEN.name,
-              no: pokemon.id,
-              types: typesEnArray,
-              genes: genusEn,
-              height: pokemon.height,
-              weight: pokemon.weight,
-              image: pokemonImage,
-            });
-            // console.log("_pokemonData.en", _pokemonData.en);
-          }
-          if (nameJA) {
-            _pokemonData.ja.push({
-              name: nameJA.name,
-              no: pokemon.id,
-              types: typesJaArray,
-              genes: genusJa,
-              height: pokemon.height,
-              weight: pokemon.weight,
-              image: pokemonImage,
-            });
-            // console.log("_pokemonData.ja", _pokemonData.ja);
-          }
-        }
-
-        // Update pokemonData
-        if (isMounted) {
-          setPokemonData((prevPokemonData) => ({
-            en: [...prevPokemonData.en, ..._pokemonData.en],
-            ja: [...prevPokemonData.ja, ..._pokemonData.ja],
-          }));
-
-          // Hide loading messages
-          setIsLoading(false);
-        }
-      };
+    // Get each Pokemon data and push to pokemonData
+    const _pokemonData = {
+      en: [],
+      ja: [],
     };
-    // Execute fetchPokemonData()
-    fetchPokemonData();
 
-    // Cleanup function
+    /*
+     * Fetch each pokemon data
+     * - Fetch pokemon data 1 by 1
+     * - Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
+     * - Store each pokemon data into _rawPokemonData array
+     * - pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
+     *
+     * @param {array} receivedPokemons - receivedPokemonsArray
+     */
+    const getEachPokemonData = async (receivedPokemons) => {
+      let _rawPokemonData = await Promise.all(
+        receivedPokemons.map((pokemon) => {
+          return getPokemon(pokemon.url);
+        })
+      );
+      console.log("_rawPokemonData", _rawPokemonData);
+      await putPokemonDataForEachLang(_rawPokemonData);
+      console.log("_pokemonData: ", _pokemonData);
+    };
+
+    /*
+     * Put fetched pokemon data into each language array in pokemonData state
+     * 1. Fetch each pokemon data as below:
+     * - name,
+     * - no,
+     * - types,
+     * - genus,
+     * - weight,
+     * - height,
+     * - image
+     * 2. Push them into _pokemonData array for each language
+     * 3. Add them into pokemonData array for each language
+     *
+     * @param {array} receivedRawPokemonData - _rawPokemonData[{},{}]
+     */
+    const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
+      console.log("receivedRawPokemonData", receivedRawPokemonData);
+      for (const pokemon of receivedRawPokemonData) {
+        const speciesResponse = await fetch(pokemon.species.url);
+        const speciesData = await speciesResponse.json();
+        // console.log("speciesData", speciesData);
+
+        // Fetch Name
+        const nameEN = speciesData.names.find(
+          (entry) => entry.language.name === "en"
+        );
+        const nameJA = speciesData.names.find(
+          (entry) => entry.language.name === "ja"
+        );
+
+        // Fetch Types
+        const typesEnArray = [];
+        const typesJaArray = [];
+        for (const type of pokemon.types) {
+          const typesResponse = await fetch(type.type.url);
+          const typesData = await typesResponse.json();
+          // console.log("typesData", typesData);
+
+          const typeEnEntry = typesData.names.find(
+            (entry) => entry.language.name === "en"
+          );
+          const typeJaEntry = typesData.names.find(
+            (entry) => entry.language.name === "ja"
+          );
+          typesEnArray.push(typeEnEntry.name);
+          typesJaArray.push(typeJaEntry.name);
+        }
+        // console.log("pokemon.species", pokemon.species);
+
+        // Fetch Genus
+        const genusEnEntry = await speciesData.genera.find(
+          (entry) => entry.language.name === "en"
+        );
+        const genusJaEntry = await speciesData.genera.find(
+          (entry) => entry.language.name === "ja"
+        );
+        const genusEn = genusEnEntry ? genusEnEntry.genus : null;
+        const genusJa = genusJaEntry ? genusJaEntry.genus : null;
+
+        // Fetch image
+        const pokemonImage = await pokemon.sprites.front_default;
+
+        // Fetch No - no: pokemon.id
+        // Fetch Height - height: pokemon.height
+        // Fetch Weight - weight: pokemon.weight
+
+        // Push data
+        if (nameEN) {
+          _pokemonData.en.push({
+            name: nameEN.name,
+            no: pokemon.id,
+            types: typesEnArray,
+            genes: genusEn,
+            height: pokemon.height,
+            weight: pokemon.weight,
+            image: pokemonImage,
+          });
+          // console.log("_pokemonData.en", _pokemonData.en);
+        }
+        if (nameJA) {
+          _pokemonData.ja.push({
+            name: nameJA.name,
+            no: pokemon.id,
+            types: typesJaArray,
+            genes: genusJa,
+            height: pokemon.height,
+            weight: pokemon.weight,
+            image: pokemonImage,
+          });
+          // console.log("_pokemonData.ja", _pokemonData.ja);
+        }
+      }
+
+      // Update pokemonData
+      setPokemonData((prevPokemonData) => ({
+        en: [...prevPokemonData.en, ..._pokemonData.en],
+        ja: [...prevPokemonData.ja, ..._pokemonData.ja],
+      }));
+
+      // Hide loading messages
+      setIsLoading(false);
+    };
+    await getEachPokemonData(receivedPokemonsArray);
+    // console.log("receivedPokemonsArray: ", receivedPokemonsArray);
+  }, [offset, isOffsetWithinLimit]);
+
+  useEffect(() => {
+    let isMounted = true;
+    // Execute fetchPokemonData()
+    fetchPokemonData().then(() => {
+      if (isMounted) {
+        // Hide loading messages
+        setIsLoading(false);
+      }
+    });
     return () => {
       isMounted = false;
     };
-  }, [page, offset]);
+  }, [page, fetchPokemonData]);
+
+  // Cleanup function
+  // return () => {
+  //   isMounted = false;
+  // };
 
   // Update filteredPokemons for displaying
   useEffect(() => {
