@@ -7,6 +7,9 @@ import CenterLoading from "./components/Loading/CenterLoading.js";
 import Search from "./components/Search/Search.js";
 import "./App.css";
 
+// Object for cache
+const pokemonCache = {};
+
 const App = () => {
   const { t, i18n } = useTranslation(); // i18next
   const [page, setPage] = useState(1); // Update fetching Pokemon URL
@@ -125,10 +128,20 @@ const App = () => {
    */
   const fetchPokemonData = useCallback(async () => {
     console.log("Now Fetching Pokemon data");
-    if (!isOffsetWithinLimit) return;
+    if (!isOffsetWithinLimit || isLoading) return;
 
     // Display loading messages
     setIsLoading(true);
+
+    // Check cache
+    if (pokemonCache[offset]) {
+      setPokemonData((prevPokemonData) => ({
+        en: [...prevPokemonData.en, ...pokemonCache[offset].en],
+        ja: [...prevPokemonData.ja, ...pokemonCache[offset].ja],
+      }));
+      setIsLoading(false);
+      return;
+    }
 
     // Update Pokemon URL
     const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
@@ -259,6 +272,9 @@ const App = () => {
           // console.log("_pokemonData.ja", _pokemonData.ja);
         }
       }
+
+      // Store new Pokemon data (_pokemonData) to pokemonCache[offset]
+      pokemonCache[offset] = _pokemonData;
 
       // Update pokemonData
       setPokemonData((prevPokemonData) => ({
