@@ -128,7 +128,7 @@ const App = () => {
    */
   const fetchPokemonData = useCallback(async () => {
     console.log("Now Fetching Pokemon data");
-    if (!isOffsetWithinLimit || isLoading) return;
+    if (!isOffsetWithinLimit) return;
 
     // Display loading messages
     setIsLoading(true);
@@ -287,7 +287,7 @@ const App = () => {
     };
     await getEachPokemonData(receivedPokemonsArray);
     // console.log("receivedPokemonsArray: ", receivedPokemonsArray);
-  }, [offset, isOffsetWithinLimit]);
+  }, [isOffsetWithinLimit, offset]);
 
   useEffect(() => {
     let isMounted = true;
