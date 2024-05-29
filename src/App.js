@@ -212,22 +212,47 @@ const App = () => {
 
         // Fetch Types
         const typesEnArray = [];
-        const typesJaArray = [];
         for (const type of pokemon.types) {
-          const typesResponse = await fetch(type.type.url);
-          const typesData = await typesResponse.json();
-          // console.log("typesData", typesData);
-
-          const typeEnEntry = typesData.names.find(
-            (entry) => entry.language.name === "en"
-          );
-          const typeJaEntry = typesData.names.find(
-            (entry) => entry.language.name === "ja"
-          );
-          typesEnArray.push(typeEnEntry.name);
-          typesJaArray.push(typeJaEntry.name);
+          const fetchedType = type.type.name;
+          typesEnArray.push(fetchedType);
+          // console.log(typesEnArray);
         }
-        // console.log("pokemon.species", pokemon.species);
+        // console.log(typesEnArray);
+        /*
+         * Translate English types into Japanese
+         * 1. Set translation mapping as typeTranslations object
+         * 2. Find the type in typeTranslations object
+         * 3. Set the translated Japanese type to typesJaArray
+         *
+         * @param {array} typesEnArray - The original English types before translation to Japanese
+         */
+        const typeTranslations = {
+          bug: "むし",
+          dark: "あく",
+          dragon: "ドラゴン",
+          electric: "でんき",
+          fairy: "フェアリー",
+          fighting: "かくとう",
+          fire: "ほのお",
+          flying: "ひこう",
+          ghost: "ゴースト",
+          grass: "くさ",
+          ground: "じめん",
+          ice: "こおり",
+          normal: "ノーマル",
+          poison: "どく",
+          psychic: "エスパー",
+          rock: "いわ",
+          steel: "はがね",
+          water: "みず",
+        };
+        const translateTypes = (typesEnArray) => {
+          const translatedTypesJaArray = typesEnArray.map(
+            (type) => typeTranslations[type]
+          );
+          return translatedTypesJaArray;
+        };
+        const typesJaArray = translateTypes(typesEnArray);
 
         // Fetch Genus
         const genusEnEntry = await speciesData.genera.find(
