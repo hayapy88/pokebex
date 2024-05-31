@@ -176,7 +176,7 @@ const App = () => {
         })
       );
       console.log("_rawPokemonData", _rawPokemonData);
-      await putPokemonDataForEachLang(_rawPokemonData);
+      putPokemonDataForEachLang(_rawPokemonData);
       console.log("_pokemonData: ", _pokemonData);
     };
 
