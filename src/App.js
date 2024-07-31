@@ -8,7 +8,7 @@ import Search from "./components/Search/Search.js";
 import "./App.css";
 
 // Object for cache
-const pokemonCache = {};
+// const pokemonCache = {};
 
 const App = () => {
   const { t, i18n } = useTranslation(); // i18next
@@ -134,14 +134,14 @@ const App = () => {
     setIsLoading(true);
 
     // Check cache
-    if (pokemonCache[offset]) {
-      setPokemonData((prevPokemonData) => ({
-        en: [...prevPokemonData.en, ...pokemonCache[offset].en],
-        ja: [...prevPokemonData.ja, ...pokemonCache[offset].ja],
-      }));
-      setIsLoading(false);
-      return;
-    }
+    // if (pokemonCache[offset]) {
+    //   setPokemonData((prevPokemonData) => ({
+    //     en: [...prevPokemonData.en, ...pokemonCache[offset].en],
+    //     ja: [...prevPokemonData.ja, ...pokemonCache[offset].ja],
+    //   }));
+    //   setIsLoading(false);
+    //   return;
+    // }
 
     // Update Pokemon URL
     const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
@@ -155,30 +155,6 @@ const App = () => {
     console.log("receivedPokemonsArray", receivedPokemonsArray);
 
     // Get each Pokemon data and push to pokemonData
-    const _pokemonData = {
-      en: [],
-      ja: [],
-    };
-
-    /*
-     * Fetch each pokemon data
-     * - Fetch pokemon data 1 by 1
-     * - Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
-     * - Store each pokemon data into _rawPokemonData array
-     * - pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
-     *
-     * @param {array} receivedPokemons - receivedPokemonsArray
-     */
-    const getEachPokemonData = async (receivedPokemons) => {
-      let _rawPokemonData = await Promise.all(
-        receivedPokemons.map((pokemon) => {
-          return getPokemon(pokemon.url);
-        })
-      );
-      console.log("_rawPokemonData", _rawPokemonData);
-      putPokemonDataForEachLang(_rawPokemonData);
-      console.log("_pokemonData: ", _pokemonData);
-    };
 
     /*
      * Put fetched pokemon data into each language array in pokemonData state
@@ -195,8 +171,24 @@ const App = () => {
      *
      * @param {array} receivedRawPokemonData - _rawPokemonData[{},{}]
      */
+
+    /*
+     * Fetch each pokemon data
+     * - Fetch pokemon data 1 by 1
+     * - Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
+     * - Store each pokemon data into _rawPokemonData array
+     * - pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
+     *
+     * @param {array} receivedPokemons - receivedPokemonsArray
+     */
+
+    const _pokemonData = {
+      en: [],
+      ja: [],
+    };
+
     const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
-      console.log("receivedRawPokemonData", receivedRawPokemonData);
+      // console.log("receivedRawPokemonData", receivedRawPokemonData);
       for (const pokemon of receivedRawPokemonData) {
         const speciesResponse = await fetch(pokemon.species.url);
         const speciesData = await speciesResponse.json();
@@ -299,17 +291,29 @@ const App = () => {
       }
 
       // Store new Pokemon data (_pokemonData) to pokemonCache[offset]
-      pokemonCache[offset] = _pokemonData;
+      // pokemonCache[offset] = _pokemonData;
 
       // Update pokemonData
       setPokemonData((prevPokemonData) => ({
         en: [...prevPokemonData.en, ..._pokemonData.en],
         ja: [...prevPokemonData.ja, ..._pokemonData.ja],
       }));
+      console.log("_pokemonData: ", _pokemonData);
 
       // Hide loading messages
       setIsLoading(false);
     };
+
+    const getEachPokemonData = async (receivedPokemons) => {
+      let _rawPokemonData = await Promise.all(
+        receivedPokemons.map((pokemon) => {
+          return getPokemon(pokemon.url);
+        })
+      );
+      console.log("_rawPokemonData", _rawPokemonData);
+      putPokemonDataForEachLang(_rawPokemonData);
+    };
+
     await getEachPokemonData(receivedPokemonsArray);
     // console.log("receivedPokemonsArray: ", receivedPokemonsArray);
   }, [isOffsetWithinLimit, offset]);
@@ -375,12 +379,9 @@ const App = () => {
         みず: "water",
       };
 
-      if (
-        i18n.language === "en" &&
-        pokemonData.en &&
-        query.length > 0 &&
-        activeType.length < 18
-      ) {
+      if (query.length === 0 && activeType.length === 18) {
+        return;
+      } else if (i18n.language === "en" && pokemonData.en) {
         // Filter by name and types for English
         const filteredEnPokemon = pokemonData.en.filter((pokemon) => {
           return (
@@ -392,12 +393,7 @@ const App = () => {
         });
         // Update filteredPokemons for English
         setFilteredPokemons({ en: filteredEnPokemon });
-      } else if (
-        i18n.language === "ja" &&
-        pokemonData.ja &&
-        query.length > 0 &&
-        activeType.length < 18
-      ) {
+      } else if (i18n.language === "ja" && pokemonData.ja) {
         // Filter by name and types for Japanese
         const filteredJaPokemon = pokemonData.ja.filter((pokemon) => {
           return (
@@ -416,11 +412,13 @@ const App = () => {
   // Filter pokemons when query or activeTypes is changed
   useEffect(() => {
     filterPokemons(query, activeType);
-    console.log(activeType);
+    console.log("activeType: ", activeType);
   }, [query, activeType, filterPokemons]);
+
   // For checking the contents of filteredPokemons
   useEffect(() => {
-    console.log("filteredPokemons: ", filteredPokemons);
+    if (filteredPokemons.length > 0)
+      console.log("filteredPokemons: ", filteredPokemons);
   }, [filteredPokemons]);
 
   /*
