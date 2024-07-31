@@ -375,7 +375,12 @@ const App = () => {
         みず: "water",
       };
 
-      if (i18n.language === "en" && pokemonData.en) {
+      if (
+        i18n.language === "en" &&
+        pokemonData.en &&
+        query.length > 0 &&
+        activeType.length < 18
+      ) {
         // Filter by name and types for English
         const filteredEnPokemon = pokemonData.en.filter((pokemon) => {
           return (
@@ -387,7 +392,12 @@ const App = () => {
         });
         // Update filteredPokemons for English
         setFilteredPokemons({ en: filteredEnPokemon });
-      } else if (i18n.language === "ja" && pokemonData.ja) {
+      } else if (
+        i18n.language === "ja" &&
+        pokemonData.ja &&
+        query.length > 0 &&
+        activeType.length < 18
+      ) {
         // Filter by name and types for Japanese
         const filteredJaPokemon = pokemonData.ja.filter((pokemon) => {
           return (
