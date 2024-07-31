@@ -12,7 +12,7 @@ import "./App.css";
 
 const App = () => {
   const { t, i18n } = useTranslation(); // i18next
-  const [page, setPage] = useState(1); // Update fetching Pokemon URL
+  // const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [pageLang, setPageLang] = useState(i18n.language); // To observe page language
   const [isComponentInitialized, setIsComponentInitialized] = useState(false); // Center Loading when initial loading
@@ -51,21 +51,21 @@ const App = () => {
    * @dependencies
    * - isLoading: The state of loading true or false
    */
-  const observer = useRef();
-  const lastItemRef = useCallback(
-    (node) => {
-      if (isLoading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((prev) => prev + 1);
-          setIsLoading(false);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [isLoading]
-  );
+  // const observer = useRef();
+  // const lastItemRef = useCallback(
+  //   (node) => {
+  //     if (isLoading) return;
+  //     if (observer.current) observer.current.disconnect();
+  //     observer.current = new IntersectionObserver((entries) => {
+  //       if (entries[0].isIntersecting) {
+  //         setPage((prev) => prev + 1);
+  //         setIsLoading(false);
+  //       }
+  //     });
+  //     if (node) observer.current.observe(node);
+  //   },
+  //   [isLoading]
+  // );
 
   useEffect(() => {
     /*
@@ -112,9 +112,9 @@ const App = () => {
    * - offset: The number of already fetched pokemons
    */
   // Fetch pokemon 12 by 12
-  const offset = useMemo(() => 12 * (page - 1), [page]);
+  // const offset = useMemo(() => 12 * (page - 1), [page]);
   // Limit fetching Pokemon to 1024
-  const isOffsetWithinLimit = useMemo(() => offset < 1025, [offset]);
+  // const isOffsetWithinLimit = useMemo(() => offset < 1025, [offset]);
 
   /*
    * Fetch Pokemon Data
@@ -128,7 +128,7 @@ const App = () => {
    */
   const fetchPokemonData = useCallback(async () => {
     console.log("Now Fetching Pokemon data");
-    if (!isOffsetWithinLimit) return;
+    // if (!isOffsetWithinLimit) return;
 
     // Display loading messages
     setIsLoading(true);
@@ -144,7 +144,8 @@ const App = () => {
     // }
 
     // Update Pokemon URL
-    const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
+    // const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
+    const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=151`;
 
     // Get Pokemon name and URL from limited fetchPokemonURL.
     // eg) [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }, {}, {}, ...]
@@ -316,7 +317,7 @@ const App = () => {
 
     await getEachPokemonData(receivedPokemonsArray);
     // console.log("receivedPokemonsArray: ", receivedPokemonsArray);
-  }, [isOffsetWithinLimit, offset]);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -330,7 +331,7 @@ const App = () => {
     return () => {
       isMounted = false;
     };
-  }, [page, fetchPokemonData]);
+  }, [fetchPokemonData]);
 
   // Cleanup function
   // return () => {
@@ -490,18 +491,18 @@ const App = () => {
                       <Card
                         key={index}
                         pokemon={pokemon}
-                        ref={
-                          index === filteredPokemons[pageLang].length - 1
-                            ? lastItemRef
-                            : null
-                        }
+                        // ref={
+                        //   index === filteredPokemons[pageLang].length - 1
+                        //     ? lastItemRef
+                        //     : null
+                        // }
                         t={t}
                       />
                     );
                   })}
               </div>
               <div>
-                {isLoading && offset <= 1025 && <p>{t("loading")}</p>}
+                {isLoading && <p>{t("loading")}</p>}
                 {!isLoading && filteredPokemons[pageLang].length === 0 && (
                   <p>
                     {t("messages.noFound1")}
