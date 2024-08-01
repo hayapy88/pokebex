@@ -1,4 +1,3 @@
-// import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { getPokemon } from "./utils/pokemon.js";
@@ -8,15 +7,11 @@ import CenterLoading from "./components/Loading/CenterLoading.js";
 import Search from "./components/Search/Search.js";
 import "./App.css";
 
-// Object for cache
-// const pokemonCache = {};
-
 const App = () => {
   const { t, i18n } = useTranslation(); // i18next
   // const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [pageLang, setPageLang] = useState(i18n.language); // To observe page language
-  // const [isComponentInitialized, setIsComponentInitialized] = useState(false); // Center Loading when initial loading
   const [pokemonData, setPokemonData] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
   const [isReady, setIsReady] = useState(false);
@@ -44,7 +39,7 @@ const App = () => {
   const [filteredPokemons, setFilteredPokemons] = useState({ en: [], ja: [] });
 
   /*
-   * Infinite Scroll
+   * Infinite Scroll (Inactivated)
    * - Use IntersectionObserver.
    * - When the last item comes into the screen, the next bunch of pokemon data will be fetched.
    *
@@ -73,13 +68,11 @@ const App = () => {
     /*
      * Activate i18next Initialization
      * - Observe i18next Initialization
-     * - isComponentInitialized -> true
      *
      * @dependencies
      * - i18n: eg - initialized, loaded, init
      */
     const handleInit = () => {
-      // setIsComponentInitialized(true);
       console.log("i18n initialized");
     };
 
@@ -108,6 +101,8 @@ const App = () => {
 
   /*
    * Fetch pokemons
+   * Noted: Stop using offset updates of 12 at a time because it's not compatible with the search function
+   *
    * - A chain of fetching pokemon data
    *
    * @dependencies
@@ -123,11 +118,11 @@ const App = () => {
    * Fetch Pokemon Data
    * 1. Create API URL to fetch pokemon data - Poke API: https://pokeapi.co/
    * 2. Fetch pokemon data
-   * 3. Reserve pokemon data for each language into the pokemonData state
+   * 3. Store pokemon data for each language into the pokemonData state
    *
-   * @dependencies
-   * - isOffsetWithinLimit: Max number of fetching Pokemon
-   * - offset: Number of already fetched pokemon
+  //  * dependencies
+  //  * - isOffsetWithinLimit: Max number of fetching Pokemon
+  //  * - offset: Number of already fetched pokemon
    */
   const fetchPokemonData = useCallback(async () => {
     console.log("Now Fetching Pokemon data");
@@ -136,17 +131,7 @@ const App = () => {
     // Display loading messages
     setIsLoading(true);
 
-    // Check cache
-    // if (pokemonCache[offset]) {
-    //   setPokemonData((prevPokemonData) => ({
-    //     en: [...prevPokemonData.en, ...pokemonCache[offset].en],
-    //     ja: [...prevPokemonData.ja, ...pokemonCache[offset].ja],
-    //   }));
-    //   setIsLoading(false);
-    //   return;
-    // }
-
-    // Update Pokemon URL
+    // Create(Update previously) Pokemon URL
     // const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
     const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=151`;
 
@@ -294,9 +279,6 @@ const App = () => {
         }
       }
 
-      // Store new Pokemon data (_pokemonData) to pokemonCache[offset]
-      // pokemonCache[offset] = _pokemonData;
-
       // Update pokemonData
       setPokemonData((prevPokemonData) => ({
         en: [...prevPokemonData.en, ..._pokemonData.en],
@@ -361,6 +343,7 @@ const App = () => {
    * - i18n.language: When language is changes
    * - pokemonData.en: When pokemonData.en is changed
    * - pokemonData.ja: When pokemonData.ja is changed
+   * - isReady: After finishing creating arrays to display
    */
   const filterPokemons = useCallback(
     (query, activeType) => {
@@ -387,7 +370,7 @@ const App = () => {
       };
 
       if (query.length === 0 && activeType.length === 18 && !isReady) {
-        console.log("No search condition");
+        console.log("No search condition in the beginning.");
         return;
       } else if (i18n.language === "en" && pokemonData.en && isReady) {
         // Filter by name and types for English
@@ -448,10 +431,10 @@ const App = () => {
    */
   const handleAllTypes = () => {
     if (activeType.length >= 1) {
-      console.log("All OFF");
+      console.log("All inactivated");
       setActiveType([]); // Cancel all active types
     } else {
-      console.log("All ON");
+      console.log("All activated");
       setActiveType(pokemonTypes); // Set all active types
     }
   };
