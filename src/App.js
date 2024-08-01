@@ -9,12 +9,11 @@ import "./App.css";
 
 const App = () => {
   const { t, i18n } = useTranslation(); // i18next
-  // const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [pageLang, setPageLang] = useState(i18n.language); // To observe page language
-  const [pokemonData, setPokemonData] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
+  const [pokemonData, setPokemonData] = useState({ en: [], ja: [] }); // Pokemon Data for display
   const [query, setQuery] = useState(""); // Query for search Pokemon
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(false); // Finished update of pokemonData
   const pokemonTypes = [
     "bug",
     "dark",
@@ -35,17 +34,11 @@ const App = () => {
     "steel",
     "water",
   ];
-  const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
-  const [filteredPokemons, setFilteredPokemons] = useState({ en: [], ja: [] });
+  const [activeType, setActiveType] = useState(pokemonTypes); // Selected Pokemon types
+  const [filteredPokemons, setFilteredPokemons] = useState({ en: [], ja: [] }); // Filtered Pokemon for display
 
   useEffect(() => {
-    /*
-     * Activate i18next Initialization
-     * - Observe i18next Initialization
-     *
-     * @dependencies
-     * - i18n: eg - initialized, loaded, init
-     */
+    // Handle i18next initialization
     const handleInit = () => {
       console.log("i18n initialized");
     };
@@ -73,64 +66,36 @@ const App = () => {
     setPageLang(i18n.language);
   }, [i18n.language]);
 
-  /*
+  /**
    * Fetch Pokemon Data
    * 1. Create API URL to fetch pokemon data - Poke API: https://pokeapi.co/
    * 2. Fetch pokemon data
    * 3. Store pokemon data for each language into the pokemonData state
-   *
    */
   const fetchPokemonData = useCallback(async () => {
-    console.log("Now Fetching Pokemon data");
-
     // Display loading messages
     setIsLoading(true);
 
-    // Create Pokemon URL
     const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=151`;
-
-    // Get Pokemon name and URL from limited fetchPokemonURL.
-    // eg) [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }, {}, {}, ...]
     const response = await getPokemon(fetchPokemonURL);
     console.log("API response:", response);
 
     const receivedPokemonsArray = response.results;
     console.log("receivedPokemonsArray", receivedPokemonsArray);
 
-    // Get each Pokemon data and push to pokemonData
-    /*
-     * Put fetched pokemon data into each language array in pokemonData state
-     * 1. Fetch each pokemon data as below:
-     * - name,
-     * - no,
-     * - types,
-     * - genus,
-     * - weight,
-     * - height,
-     * - image
-     * 2. Push them into _pokemonData array for each language
-     * 3. Add them into pokemonData array for each language
+    /**
+     * Store each Pokemon's data in the pokemonData state
+     * 1. Process Pokemon's data:
+     * - Extract attributes: name, no, types, genus, weight, height, image
+     * 2. Add them to corresponding landing array in pokemonData
      *
      * @param {array} receivedRawPokemonData - _rawPokemonData[{},{}]
      */
-
-    /*
-     * Fetch each pokemon data
-     * - Fetch pokemon data 1 by 1
-     * - Can get abilities, height, weight, types, species(detailed information), sprites(images), etc.
-     * - Store each pokemon data into _rawPokemonData array
-     * - pokemon.url: "https://pokeapi.co/api/v2/pokemon/1/" etc.
-     *
-     * @param {array} receivedPokemons - receivedPokemonsArray
-     */
-
     const _pokemonData = {
       en: [],
       ja: [],
     };
-
     const putPokemonDataForEachLang = async (receivedRawPokemonData) => {
-      // console.log("receivedRawPokemonData", receivedRawPokemonData);
       for (const pokemon of receivedRawPokemonData) {
         const speciesResponse = await fetch(pokemon.species.url);
         const speciesData = await speciesResponse.json();
@@ -143,20 +108,21 @@ const App = () => {
           (entry) => entry.language.name === "ja"
         );
 
+        /**
+         * Translate English types into Japanese
+         * 1. Set translation mapping as typeTranslations object
+         * 2. Find the type in typeTranslations object
+         * 3. Set the translated Japanese type to typesJaArray
+         *
+         * @param {array} typesEnArray - Pokemon's fetched English types array
+         * @returns {array} translatedTypesJaArray - Translated Japanese types array
+         */
         // Fetch Types
         const typesEnArray = [];
         for (const type of pokemon.types) {
           const fetchedType = type.type.name;
           typesEnArray.push(fetchedType);
         }
-        /*
-         * Translate English types into Japanese
-         * 1. Set translation mapping as typeTranslations object
-         * 2. Find the type in typeTranslations object
-         * 3. Set the translated Japanese type to typesJaArray
-         *
-         * @param {array} typesEnArray - The original English types before translation to Japanese
-         */
         const typeTranslations = {
           bug: "むし",
           dark: "あく",
@@ -243,6 +209,15 @@ const App = () => {
       setIsReady(true);
     };
 
+    /**
+     * Fetch detailed data for each Pokemon
+     * 1. Retrieve data for each Pokemon one by one
+     * (Data includes abilities, height, weight, types, species(detailed information), sprites(images), etc.)
+     * 2. Store the fetched data in _rawPokemonData array
+     *
+     * @param {array} receivedPokemons - receivedPokemonsArray
+     * @returns {Promise<void>} - Updates the state with fetched data
+     */
     const getEachPokemonData = async (receivedPokemons) => {
       let _rawPokemonData = await Promise.all(
         receivedPokemons.map((pokemon) => {
@@ -252,14 +227,11 @@ const App = () => {
       console.log("_rawPokemonData", _rawPokemonData);
       putPokemonDataForEachLang(_rawPokemonData);
     };
-
     await getEachPokemonData(receivedPokemonsArray);
-    // console.log("receivedPokemonsArray: ", receivedPokemonsArray);
   }, []);
 
   useEffect(() => {
     let isMounted = true;
-    // Execute fetchPokemonData()
     fetchPokemonData().then(() => {
       if (isMounted) {
         // Hide loading messages
@@ -271,23 +243,16 @@ const App = () => {
     };
   }, [fetchPokemonData]);
 
-  // Cleanup function
-  // return () => {
-  //   isMounted = false;
-  // };
-
-  // Update filteredPokemons for displaying
   useEffect(() => {
     setFilteredPokemons(pokemonData);
   }, [pokemonData]);
 
-  /*
+  /**
    * Filter Pokemons for display
    * - Filter by name and types
    *
-   * @param
-   * - {string} query - the value in Pokemon name search box
-   * - {array} activeType - Array of active types
+   * @param {string} query - The value in Pokemon name search box
+   * @param {array} activeType - Array of active types
    *
    * @dependencies
    * - i18n.language: When language is changes
@@ -362,20 +327,19 @@ const App = () => {
       console.log("filteredPokemons: ", filteredPokemons);
   }, [filteredPokemons]);
 
-  /*
+  /**
    * Update query which is the keyword to filter by name
    * 1. Get Key word from Pokemon name Search box
    * 2. Update query by the keyword
    *
-   * @param
-   * - {string} newQuery - the value in Pokemon name search box
+   * @param {string} newQuery - the value in Pokemon name search box
    */
   const handleInputChange = (newQuery) => {
     setQuery(newQuery);
     filterPokemons(query, activeType);
   };
 
-  /*
+  /**
    * Switch active types by All types On or Off button clicking
    * - Get click event on the #allTypes button element
    */
@@ -388,13 +352,12 @@ const App = () => {
       setActiveType(pokemonTypes); // Set all active types
     }
   };
-  /*
+  /**
    * Update active types to filter pokemon by types
    * - 1. Get click event on each type
    * - 2. Update the type
    *
-   * @param
-   * - {string} clickedType - The type the user clicked
+   * @param {string} clickedType - The type the user clicked
    */
   const handleTypeClick = (clickedType) => {
     setActiveType((prevActiveType) => {
