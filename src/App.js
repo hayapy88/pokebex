@@ -38,32 +38,6 @@ const App = () => {
   const [activeType, setActiveType] = useState(pokemonTypes); // Pokemon Types
   const [filteredPokemons, setFilteredPokemons] = useState({ en: [], ja: [] });
 
-  /*
-   * Infinite Scroll (Inactivated)
-   * - Use IntersectionObserver.
-   * - When the last item comes into the screen, the next bunch of pokemon data will be fetched.
-   *
-   * @param {object} node - The last item in filteredPokemons
-   *
-   * @dependencies
-   * - isLoading: The state of loading true or false
-   */
-  // const observer = useRef();
-  // const lastItemRef = useCallback(
-  //   (node) => {
-  //     if (isLoading) return;
-  //     if (observer.current) observer.current.disconnect();
-  //     observer.current = new IntersectionObserver((entries) => {
-  //       if (entries[0].isIntersecting) {
-  //         setPage((prev) => prev + 1);
-  //         setIsLoading(false);
-  //       }
-  //     });
-  //     if (node) observer.current.observe(node);
-  //   },
-  //   [isLoading]
-  // );
-
   useEffect(() => {
     /*
      * Activate i18next Initialization
@@ -100,39 +74,19 @@ const App = () => {
   }, [i18n.language]);
 
   /*
-   * Fetch pokemons
-   * Noted: Stop using offset updates of 12 at a time because it's not compatible with the search function
-   *
-   * - A chain of fetching pokemon data
-   *
-   * @dependencies
-   * - page: The trigger to update fetch URL to fetch next pokemons
-   * - offset: The number of already fetched pokemons
-   */
-  // Fetch pokemon 12 by 12
-  // const offset = useMemo(() => 12 * (page - 1), [page]);
-  // Limit fetching Pokemon to 1024
-  // const isOffsetWithinLimit = useMemo(() => offset < 1025, [offset]);
-
-  /*
    * Fetch Pokemon Data
    * 1. Create API URL to fetch pokemon data - Poke API: https://pokeapi.co/
    * 2. Fetch pokemon data
    * 3. Store pokemon data for each language into the pokemonData state
    *
-  //  * dependencies
-  //  * - isOffsetWithinLimit: Max number of fetching Pokemon
-  //  * - offset: Number of already fetched pokemon
    */
   const fetchPokemonData = useCallback(async () => {
     console.log("Now Fetching Pokemon data");
-    // if (!isOffsetWithinLimit) return;
 
     // Display loading messages
     setIsLoading(true);
 
-    // Create(Update previously) Pokemon URL
-    // const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=12&offset=${offset}`;
+    // Create Pokemon URL
     const fetchPokemonURL = `https://pokeapi.co/api/v2/pokemon?limit=151`;
 
     // Get Pokemon name and URL from limited fetchPokemonURL.
@@ -144,7 +98,6 @@ const App = () => {
     console.log("receivedPokemonsArray", receivedPokemonsArray);
 
     // Get each Pokemon data and push to pokemonData
-
     /*
      * Put fetched pokemon data into each language array in pokemonData state
      * 1. Fetch each pokemon data as below:
@@ -181,7 +134,6 @@ const App = () => {
       for (const pokemon of receivedRawPokemonData) {
         const speciesResponse = await fetch(pokemon.species.url);
         const speciesData = await speciesResponse.json();
-        // console.log("speciesData", speciesData);
 
         // Fetch Name
         const nameEN = speciesData.names.find(
@@ -196,9 +148,7 @@ const App = () => {
         for (const type of pokemon.types) {
           const fetchedType = type.type.name;
           typesEnArray.push(fetchedType);
-          // console.log(typesEnArray);
         }
-        // console.log(typesEnArray);
         /*
          * Translate English types into Japanese
          * 1. Set translation mapping as typeTranslations object
@@ -476,23 +426,10 @@ const App = () => {
               <div className="pokemonCardContainer grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 sm:gap-x-0 gap-y-4 mt-8 sm:mt-14 pt-6 mb-4">
                 {filteredPokemons[pageLang] &&
                   filteredPokemons[pageLang].map((pokemon, index) => {
-                    // console.log("pokemon: " + index, pokemon);
-                    return (
-                      <Card
-                        key={index}
-                        pokemon={pokemon}
-                        // ref={
-                        //   index === filteredPokemons[pageLang].length - 1
-                        //     ? lastItemRef
-                        //     : null
-                        // }
-                        t={t}
-                      />
-                    );
+                    return <Card key={index} pokemon={pokemon} t={t} />;
                   })}
               </div>
               <div>
-                {/* {isLoading && <p>{t("loading")}</p>} */}
                 {!isLoading && filteredPokemons[pageLang].length === 0 && (
                   <p>
                     {t("messages.noFound1")}
