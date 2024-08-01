@@ -66,10 +66,15 @@ const IconsGallery = ({
       id="allTypes"
       className="hidden sm:block w-14 h-14 mt-1 sm:mt-0 text-xs text-white font-bold leading-tight bg-slate-400 rounded-full"
       onClick={handleAllTypes}
-    >
-      {t("typesButtonUpper")}
-      <br></br>ON/OFF
-    </button>
+      style={{ whiteSpace: "pre-line" }}
+      dangerouslySetInnerHTML={{
+        __html:
+          activeType.length === 0
+            ? t("typesButtonSelect")
+            : t("typesButtonDeselect"),
+      }}
+    ></button>
+
     <div
       id="typeIcons"
       className="hidden sm:flex items-center justify-center flex-wrap w-20 sm:w-72 mt-1 sm:mt-0"
@@ -107,7 +112,7 @@ const Search = ({
       <div className="container fixed top-12 left-1/2 -translate-x-1/2 flex items-center justify-between sm:flex-wrap w-full h-14 sm:h-20 px-3 sm:px-2 bg-blue-100">
         <div className="relative">
           <input
-            className="search relative placeholder-slate-400 shadow appearance-none border rounded w-48 h-8 py-2 pl-3 pr-6 text-gray-700 leading-tight focus:outline-none focus:shadow-outline)]"
+            className="search relative placeholder-slate-400 shadow appearance-none border rounded w-60 h-8 py-2 pl-3 pr-6 text-gray-700 leading-tight focus:outline-none focus:shadow-outline)]"
             id="username"
             type="text"
             placeholder={t("search")}

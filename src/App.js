@@ -345,10 +345,10 @@ const App = () => {
    */
   const handleAllTypes = () => {
     if (activeType.length >= 1) {
-      console.log("All inactivated");
-      setActiveType([]); // Cancel all active types
+      console.log("Deselected all");
+      setActiveType([]); // Clear all active types
     } else {
-      console.log("All activated");
+      console.log("Selected all");
       setActiveType(pokemonTypes); // Set all active types
     }
   };
