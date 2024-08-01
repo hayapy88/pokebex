@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+// import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { getPokemon } from "./utils/pokemon.js";
 import Card from "./components/Card/Card.js";
@@ -15,9 +16,10 @@ const App = () => {
   // const [page, setPage] = useState(1); // Update fetching Pokemon URL
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [pageLang, setPageLang] = useState(i18n.language); // To observe page language
-  const [isComponentInitialized, setIsComponentInitialized] = useState(false); // Center Loading when initial loading
+  // const [isComponentInitialized, setIsComponentInitialized] = useState(false); // Center Loading when initial loading
   const [pokemonData, setPokemonData] = useState({ en: [], ja: [] }); // Pokemon Data for displaying
   const [query, setQuery] = useState(""); // Query for search Pokemon
+  const [isReady, setIsReady] = useState(false);
   const pokemonTypes = [
     "bug",
     "dark",
@@ -77,7 +79,8 @@ const App = () => {
      * - i18n: eg - initialized, loaded, init
      */
     const handleInit = () => {
-      setIsComponentInitialized(true);
+      // setIsComponentInitialized(true);
+      console.log("i18n initialized");
     };
 
     if (i18n.isInitialized) {
@@ -303,6 +306,9 @@ const App = () => {
 
       // Hide loading messages
       setIsLoading(false);
+
+      // Ready to display
+      setIsReady(true);
     };
 
     const getEachPokemonData = async (receivedPokemons) => {
@@ -380,9 +386,10 @@ const App = () => {
         みず: "water",
       };
 
-      if (query.length === 0 && activeType.length === 18) {
+      if (query.length === 0 && activeType.length === 18 && !isReady) {
+        console.log("No search condition");
         return;
-      } else if (i18n.language === "en" && pokemonData.en) {
+      } else if (i18n.language === "en" && pokemonData.en && isReady) {
         // Filter by name and types for English
         const filteredEnPokemon = pokemonData.en.filter((pokemon) => {
           return (
@@ -394,7 +401,7 @@ const App = () => {
         });
         // Update filteredPokemons for English
         setFilteredPokemons({ en: filteredEnPokemon });
-      } else if (i18n.language === "ja" && pokemonData.ja) {
+      } else if (i18n.language === "ja" && pokemonData.ja && isReady) {
         // Filter by name and types for Japanese
         const filteredJaPokemon = pokemonData.ja.filter((pokemon) => {
           return (
@@ -408,7 +415,7 @@ const App = () => {
         setFilteredPokemons({ ja: filteredJaPokemon });
       }
     },
-    [i18n.language, pokemonData.en, pokemonData.ja]
+    [i18n.language, pokemonData.en, pokemonData.ja, isReady]
   );
   // Filter pokemons when query or activeTypes is changed
   useEffect(() => {
@@ -468,7 +475,7 @@ const App = () => {
 
   return (
     <>
-      {!isComponentInitialized ? (
+      {!isReady ? (
         <CenterLoading t={t} />
       ) : (
         <div className="h-full bg-blue-100">
@@ -502,7 +509,7 @@ const App = () => {
                   })}
               </div>
               <div>
-                {isLoading && <p>{t("loading")}</p>}
+                {/* {isLoading && <p>{t("loading")}</p>} */}
                 {!isLoading && filteredPokemons[pageLang].length === 0 && (
                   <p>
                     {t("messages.noFound1")}
