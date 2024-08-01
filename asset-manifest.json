@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/pokebox/static/css/main.84690a92.css",
-    "main.js": "/pokebox/static/js/main.603bc254.js",
+    "main.css": "/pokebox/static/css/main.cbb503e3.css",
+    "main.js": "/pokebox/static/js/main.cf7f1710.js",
     "index.html": "/pokebox/index.html",
     "static/media/getFetch.cjs": "/pokebox/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.84690a92.css.map": "/pokebox/static/css/main.84690a92.css.map",
-    "main.603bc254.js.map": "/pokebox/static/js/main.603bc254.js.map"
+    "main.cbb503e3.css.map": "/pokebox/static/css/main.cbb503e3.css.map",
+    "main.cf7f1710.js.map": "/pokebox/static/js/main.cf7f1710.js.map"
   },
   "entrypoints": [
-    "static/css/main.84690a92.css",
-    "static/js/main.603bc254.js"
+    "static/css/main.cbb503e3.css",
+    "static/js/main.cf7f1710.js"
   ]
 }
