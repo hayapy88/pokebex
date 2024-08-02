@@ -1,6 +1,6 @@
 {
-  "homepage": "https://hayapy88.github.io/pokebox/",
-  "name": "pokebox",
+  "homepage": "https://hayapy88.github.io/pokedex/",
+  "name": "pokedex",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
